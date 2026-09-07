@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASB Financing (ASBF) Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#faf6ee; --panel:#ffffff; --panel2:#f0ece1; --border:#e2dbc9;
+    --text:#1a1a1a; --muted:#6b6355; --accent:#00A1B1; --accent2:#0d7a52;
+    --danger:#c0392b; --input-bg:#ffffff;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:'Nunito',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    padding:24px 16px 60px;
+  }
+  .wrap{max-width:1100px;margin:0 auto;}
+  h1{text-align:center;font-size:1.7rem;margin-bottom:6px;}
+  .subtitle{text-align:center;color:var(--muted);max-width:640px;margin:0 auto 28px;font-size:.92rem;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  @media (max-width:820px){.grid{grid-template-columns:1fr;}}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.05);}
+  .tabs{display:flex;background:var(--panel2);border-radius:10px;padding:4px;margin-bottom:20px;}
+  .tab{flex:1;text-align:center;padding:10px;border-radius:8px;cursor:pointer;color:var(--muted);font-weight:600;font-size:.9rem;user-select:none;}
+  .tab.active{background:var(--accent);color:#fff;}
+  label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:6px;}
+  .field{margin-bottom:16px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media (max-width:480px){.row2{grid-template-columns:1fr;}}
+  .input-group{position:relative;}
+  .prefix{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem;pointer-events:none;}
+  input[type=number], input[type=text]{
+    width:100%;padding:10px 12px 10px 40px;background:var(--input-bg);
+    border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.95rem;
+  }
+  .no-prefix input{padding-left:12px;}
+  input:focus{outline:none;border-color:var(--accent);}
+  .btn-row{display:flex;gap:10px;margin-top:6px;}
+  button{cursor:pointer;border:none;border-radius:8px;font-weight:600;font-size:.92rem;padding:12px;}
+  .btn-primary{flex:1;background:var(--accent);color:#fff;}
+  .btn-primary:hover{background:#008895;}
+  .btn-secondary{background:var(--panel2);color:var(--text);border:1px solid var(--border);padding:12px 18px;}
+  .btn-secondary:hover{background:#e5ded0;}
+  .results-col{display:flex;flex-direction:column;gap:20px;}
+  .summary-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.88rem;}
+  .summary-row:last-child{border-bottom:none;}
+  .summary-row span:first-child{color:var(--muted);}
+  h2{font-size:1rem;margin:0 0 14px;}
+  .result-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px dashed var(--border);}
+  .result-item:last-child{border-bottom:none;}
+  .result-label{color:var(--muted);font-size:.85rem;}
+  .result-value{font-weight:700;font-size:1rem;}
+  .positive{color:var(--accent2);}
+  .negative{color:var(--danger);}
+  .note{font-size:.78rem;color:var(--muted);background:var(--panel2);border-radius:8px;padding:10px 12px;margin-top:4px;}
+  .footnote{text-align:center;color:var(--muted);font-size:.75rem;margin-top:30px;}
+  .disclaimer{font-size:.72rem;color:var(--muted);text-align:center;margin-top:8px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>ASB Financing / Loan Calculator</h1>
+  <p class="subtitle">Project the potential returns of ASBF using Compounding or Rolling strategy, including Early Termination, and compare it against direct ASB savings.</p>
+
+  <div class="grid">
+    <div class="card">
+      <div class="tabs">
+        <div class="tab active" data-strategy="compounding">Compounding</div>
+        <div class="tab" data-strategy="rolling">Rolling</div>
+      </div>
+
+      <div class="field">
+        <label>Financing / Loan Amount (RM)</label>
+        <div class="input-group"><span class="prefix">RM</span>
+          <input type="number" id="loanAmount" value="100000" min="0" step="1000">
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label>Financing / Loan Tenure (Years)</label>
+          <div class="input-group no-prefix">
+            <input type="number" id="loanTenure" value="32" min="1" max="40" step="1">
+          </div>
+        </div>
+        <div class="field">
+          <label>Bank Profit / Interest Rate (%)</label>
+          <div class="input-group no-prefix">
+            <input type="number" id="interestRate" value="4.25" min="0" step="0.01">
+          </div>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label>Estimated ASB Dividend Rate (%)</label>
+          <div class="input-group no-prefix">
+            <input type="number" id="dividendRate" value="5.75" min="0" step="0.01">
+          </div>
+        </div>
+        <div class="field">
+          <label>Terminate after (Years)</label>
+          <div class="input-group no-prefix">
+            <input type="number" id="earlyTerminate" value="10" min="1" step="1">
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-primary" id="calcBtn">Calculate</button>
+        <button class="btn-secondary" id="clearBtn">Clear</button>
+      </div>
+    </div>
+
+    <div class="results-col">
+      <div class="card">
+        <h2>Summary</h2>
+        <div id="summaryBox"></div>
+      </div>
+
+      <div class="card">
+        <h2 id="resultTitle">ASB Financing / Loan Result (Compounding)</h2>
+        <div id="resultBox"></div>
+      </div>
+
+      <div class="card">
+        <h2>Direct ASB Savings Comparison</h2>
+        <div id="directBox"></div>
+        <div class="note">*ASB Calculation based on Monthly Minimum Balance</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footnote">Unofficial replica for illustration purposes only — not financial advice.</div>
+  <div style="text-align:center;margin-top:8px;"><a href="disclaimer.html" style="color:var(--accent);font-weight:800;font-size:.78rem;text-decoration:underline;">Full Disclaimer &amp; Limitation of Liability</a></div>
+</div>
+
+<script>
+const fmtRM = n => 'RM ' + n.toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2});
+const fmtPct = n => n.toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2}) + '%';
+const round2 = n => Math.round((n + Number.EPSILON) * 100) / 100;
+
+let strategy = 'compounding';
+
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    strategy = tab.dataset.strategy;
+    calculate();
+  });
+});
+
+document.getElementById('calcBtn').addEventListener('click', calculate);
+document.getElementById('clearBtn').addEventListener('click', ()=>{
+  document.getElementById('loanAmount').value = '';
+  document.getElementById('loanTenure').value = '';
+  document.getElementById('interestRate').value = '';
+  document.getElementById('dividendRate').value = '';
+  document.getElementById('earlyTerminate').value = '';
+  document.getElementById('summaryBox').innerHTML = '';
+  document.getElementById('resultBox').innerHTML = '';
+  document.getElementById('directBox').innerHTML = '';
+});
+
+function monthlyPayment(P, annualRatePct, tenureYears){
+  const r = (annualRatePct/100)/12;
+  const n = tenureYears*12;
+  if (r === 0) return round2(P/n);
+  const M = P*r*Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
+  return round2(M);
+}
+
+// Outstanding loan balance after `monthsElapsed`, interest rounded to cents each month (matches bank statements)
+function outstandingBalance(P, annualRatePct, M, monthsElapsed){
+  const r = (annualRatePct/100)/12;
+  let balance = P;
+  for (let i=0;i<monthsElapsed;i++){
+    const interest = round2(balance*r);
+    const principal = M - interest;
+    balance -= principal;
+  }
+  return balance;
+}
+
+// Direct ASB: monthly deposits, dividend on monthly minimum balance, credited & compounded annually
+function directASBMonthlyDeposits(depositAmount, dividendRatePct, years){
+  const monthlyRate = (dividendRatePct/100)/12;
+  let balance = 0, totalDividend = 0;
+  for (let y=0;y<years;y++){
+    let yearDiv = 0;
+    for (let m=0;m<12;m++){
+      balance += depositAmount;
+      yearDiv += balance*monthlyRate;
+    }
+    balance += yearDiv;
+    totalDividend += yearDiv;
+  }
+  return {balance, totalDividend};
+}
+
+function calculate(){
+  const P = parseFloat(document.getElementById('loanAmount').value) || 0;
+  const tenure = parseFloat(document.getElementById('loanTenure').value) || 0;
+  const interestRate = parseFloat(document.getElementById('interestRate').value) || 0;
+  const dividendRate = parseFloat(document.getElementById('dividendRate').value) || 0;
+  let years = parseFloat(document.getElementById('earlyTerminate').value) || 0;
+  if (!P || !tenure || years<=0) return;
+  years = Math.min(years, tenure);
+
+  const M = monthlyPayment(P, interestRate, tenure);
+  const monthsElapsed = years*12;
+  const outstanding = outstandingBalance(P, interestRate, M, monthsElapsed);
+  const cashBack = round2(P - outstanding);
+
+  renderSummary(P, tenure, interestRate, years, dividendRate);
+
+  if (strategy === 'compounding'){
+    document.getElementById('resultTitle').textContent = 'ASB Financing / Loan Result (Compounding)';
+    const totalPayment = round2(M*monthsElapsed);
+    const totalDividendEarned = round2(P*Math.pow(1+dividendRate/100, years) - P);
+    const totalReturns = round2(totalDividendEarned + cashBack);
+    const totalProfit = round2(totalReturns - totalPayment);
+    const roi = (totalProfit/totalPayment)*100;
+    const yearlyAvg = (Math.pow(totalReturns/totalPayment, 1/years)-1)*100;
+
+    renderResult([
+      ['Monthly Payment', fmtRM(M)],
+      ['Total Payment', fmtRM(totalPayment)],
+      ['Total Dividend Earned', fmtRM(totalDividendEarned)],
+      ['Cash Back Amount', fmtRM(cashBack)],
+      ['Total Returns', fmtRM(totalReturns)],
+      ['Total Profit / Loss', fmtRM(totalProfit), totalProfit>=0],
+      ['Profit Percentage (ROI)', fmtPct(roi), roi>=0],
+      ['Yearly Average Return (%)', fmtPct(yearlyAvg), yearlyAvg>=0],
+    ]);
+
+    const direct = directASBMonthlyDeposits(M, dividendRate, years);
+    const dTotalDeposited = round2(M*monthsElapsed);
+    const dTotalDividend = round2(direct.totalDividend);
+    const dTotalReturns = round2(dTotalDeposited + dTotalDividend);
+    const dProfit = dTotalDividend;
+    const dRoi = (dProfit/dTotalDeposited)*100;
+    const dYearlyAvg = (Math.pow(dTotalReturns/dTotalDeposited, 1/years)-1)*100;
+
+    renderDirect([
+      ['Monthly Deposit', fmtRM(M)],
+      ['Total Deposited', fmtRM(dTotalDeposited)],
+      ['Total Dividend Earned', fmtRM(dTotalDividend)],
+      ['Total Returns', fmtRM(dTotalReturns)],
+      ['Total Profit/Loss', fmtRM(dProfit), dProfit>=0],
+      ['Profit Percentage (ROI)', fmtPct(dRoi), dRoi>=0],
+      ['Yearly Average Return (%)', fmtPct(dYearlyAvg), dYearlyAvg>=0],
+    ]);
+
+  } else {
+    document.getElementById('resultTitle').textContent = 'ASB Financing / Loan Result (Rolling)';
+    const annualPayment = round2(M*12);
+    const year1Dividend = round2(P*dividendRate/100);
+    const diff = round2(year1Dividend - annualPayment);
+
+    let totalDividend, totalPayment;
+
+    if (diff >= 0){
+      // Surplus: dividend covers the payment every year, so the surplus reinvests and compounds.
+      // Only Year 1 ever needs out-of-pocket cash.
+      let balance = P;
+      totalDividend = year1Dividend;
+      balance += diff;
+      for (let y=2;y<=years;y++){
+        const div = balance*dividendRate/100;
+        const surplus = div - annualPayment;
+        totalDividend += surplus;
+        balance += surplus;
+      }
+      totalDividend = round2(totalDividend);
+      totalPayment = annualPayment;
+    } else {
+      // Deficit: dividend never covers the payment, so the balance doesn't grow — the same
+      // shortfall must be topped up out-of-pocket every remaining year.
+      const topup = round2(annualPayment - year1Dividend);
+      totalDividend = year1Dividend;
+      totalPayment = round2(annualPayment + topup*(years-1));
+    }
+
+    const totalReturns = round2(totalDividend + cashBack);
+    const totalProfit = round2(totalReturns - totalPayment);
+    const roi = (totalProfit/totalPayment)*100;
+    const yearlyAvg = (Math.pow(totalReturns/totalPayment, 1/years)-1)*100;
+
+    const surplusNote = diff >= 0
+      ? `Dividend covers annual payment with ${fmtRM(diff)} surplus`
+      : `Dividend does not cover annual payment, ${fmtRM(Math.abs(diff))} top-up needed per year`;
+
+    const rows = [
+      ['Monthly Payment', fmtRM(M)],
+      ['Year 1 Payment', fmtRM(annualPayment)],
+      ['Year 1 Dividend', fmtRM(year1Dividend)],
+      [null, surplusNote],
+    ];
+    rows.push(
+      ['Total Payment', fmtRM(totalPayment)],
+      ['Total Dividend Earned', fmtRM(totalDividend)],
+      ['Cash Back Amount', fmtRM(cashBack)],
+      ['Total Returns', fmtRM(totalReturns)],
+      ['Total Profit / Loss', fmtRM(totalProfit), totalProfit>=0],
+      ['Profit Percentage (ROI)', fmtPct(roi), roi>=0],
+      ['Yearly Average Return (%)', fmtPct(yearlyAvg), yearlyAvg>=0],
+    );
+    renderResult(rows);
+
+    // Direct ASB (Rolling)
+    const y1 = directASBMonthlyDeposits(M, dividendRate, 1);
+    let dTotalDeposited, dTotalReturns, dDirectNote = null;
+
+    if (diff >= 0){
+      // Year 1 monthly deposits, then let it compound with no further deposits
+      dTotalDeposited = round2(M*12);
+      let dBalance = y1.balance;
+      for (let y=2;y<=years;y++){ dBalance = dBalance*(1+dividendRate/100); }
+      dTotalReturns = round2(dBalance);
+    } else {
+      // Year 1 monthly deposits, then top up the same shortfall as a lump sum at the start of each year
+      const topup = round2(annualPayment - year1Dividend);
+      let dBalance = y1.balance;
+      for (let y=2;y<=years;y++){
+        dBalance += topup;
+        dBalance += dBalance*dividendRate/100;
+      }
+      dTotalReturns = round2(dBalance);
+      dTotalDeposited = totalPayment; // same cash outlay pattern as the financing side
+      if (years>1) dDirectNote = `Annual top-up of ${fmtRM(topup)} deposited for ${years-1} year${years-1>1?'s':''}, total ${fmtRM(round2(topup*(years-1)))}`;
+    }
+    const dTotalDividend = round2(dTotalReturns - dTotalDeposited);
+    const dRoi = (dTotalDividend/dTotalDeposited)*100;
+    const dYearlyAvg = (Math.pow(dTotalReturns/dTotalDeposited, 1/years)-1)*100;
+
+    const drows = [
+      ['Monthly Deposit', fmtRM(M)],
+      ['Year 1 Deposit', fmtRM(round2(M*12))],
+      ['Year 1 Dividend', fmtRM(year1Dividend)],
+    ];
+    if (dDirectNote) drows.push([null, dDirectNote]);
+    drows.push(
+      ['Total Deposited', fmtRM(dTotalDeposited)],
+      ['Total Dividend Earned', fmtRM(dTotalDividend)],
+      ['Total Returns', fmtRM(dTotalReturns)],
+      ['Total Profit/Loss', fmtRM(dTotalDividend), dTotalDividend>=0],
+      ['Profit Percentage (ROI)', fmtPct(dRoi), dRoi>=0],
+      ['Yearly Average Return (%)', fmtPct(dYearlyAvg), dYearlyAvg>=0],
+    );
+    renderDirect(drows);
+  }
+}
+
+function renderSummary(P, tenure, interestRate, years, dividendRate){
+  const rows = [
+    ['Financing / Loan Amount', fmtRM(P)],
+    ['Financing / Loan Tenure', tenure + ' years'],
+    ['Bank Profit / Interest Rate', dividendPct(interestRate)],
+    ['Early Termination after', years + ' years'],
+    ['Estimated ASB Dividend Rate', dividendPct(dividendRate)],
+  ];
+  document.getElementById('summaryBox').innerHTML = rows.map(([l,v])=>
+    `<div class="summary-row"><span>${l}</span><span>${v}</span></div>`).join('');
+}
+function dividendPct(n){ return n.toLocaleString('en-MY',{minimumFractionDigits:2,maximumFractionDigits:2}) + '%'; }
+
+function renderResult(rows){
+  document.getElementById('resultBox').innerHTML = rows.map(([label,value,positive])=>{
+    if (label === null){
+      return `<div class="note">${value}</div>`;
+    }
+    const cls = positive===undefined ? '' : (positive ? 'positive' : 'negative');
+    return `<div class="result-item"><span class="result-label">${label}</span><span class="result-value ${cls}">${value}</span></div>`;
+  }).join('');
+}
+function renderDirect(rows){
+  document.getElementById('directBox').innerHTML = rows.map(([label,value,positive])=>{
+    if (label === null){
+      return `<div class="note">${value}</div>`;
+    }
+    const cls = positive===undefined ? '' : (positive ? 'positive' : 'negative');
+    return `<div class="result-item"><span class="result-label">${label}</span><span class="result-value ${cls}">${value}</span></div>`;
+  }).join('');
+}
+
+// Load values from URL query params, matching the original calculator's URL scheme
+function loadFromQuery(){
+  const params = new URLSearchParams(window.location.search);
+  const map = {loanAmount:'loanAmount', loanTenure:'loanTenure', interestRate:'interestRate', dividendRate:'dividendRate', earlyTerminate:'earlyTerminate'};
+  let any=false;
+  for (const key in map){
+    if (params.has(key)){
+      document.getElementById(map[key]).value = params.get(key);
+      any=true;
+    }
+  }
+  return any;
+}
+
+loadFromQuery();
+calculate();
+</script>
+</body>
+</html>

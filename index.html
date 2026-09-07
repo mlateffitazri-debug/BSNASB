@@ -3,170 +3,1013 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ASB Financing (ASBF) Calculator</title>
+<title>BSN ASB Term Financing — Guided Calculator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#faf6ee; --panel:#ffffff; --panel2:#f0ece1; --border:#e2dbc9;
-    --text:#1a1a1a; --muted:#6b6355; --accent:#00A1B1; --accent2:#0d7a52;
-    --danger:#c0392b; --input-bg:#ffffff;
+    --bg:#faf6ee; --panel:#ffffff; --panel2:#f0ece1; --border:#00A1B1;
+    --text:#1a1a1a; --muted:#6b6355; --accent:#00A1B1; --accent-dark:#008895;
+    --accent2:#0d7a52; --danger:#c0392b; --warnbg:#fdf0e8; --input-bg:#ffffff;
   }
   *{box-sizing:border-box;}
   body{
     margin:0; background:var(--bg); color:var(--text);
     font-family:'Nunito',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-    padding:24px 16px 60px;
+    min-height:100vh;
   }
-  .wrap{max-width:1100px;margin:0 auto;}
-  h1{text-align:center;font-size:1.7rem;margin-bottom:6px;}
-  .subtitle{text-align:center;color:var(--muted);max-width:640px;margin:0 auto 28px;font-size:.92rem;}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
-  @media (max-width:820px){.grid{grid-template-columns:1fr;}}
-  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.05);}
-  .tabs{display:flex;background:var(--panel2);border-radius:10px;padding:4px;margin-bottom:20px;}
-  .tab{flex:1;text-align:center;padding:10px;border-radius:8px;cursor:pointer;color:var(--muted);font-weight:600;font-size:.9rem;user-select:none;}
-  .tab.active{background:var(--accent);color:#fff;}
-  label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:6px;}
-  .field{margin-bottom:16px;}
-  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-  @media (max-width:480px){.row2{grid-template-columns:1fr;}}
-  .input-group{position:relative;}
-  .prefix{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem;pointer-events:none;}
-  input[type=number], input[type=text]{
-    width:100%;padding:10px 12px 10px 40px;background:var(--input-bg);
-    border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.95rem;
+  .topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:16px 20px;display:flex;align-items:center;gap:12px;}
+  .logo-img{height:36px;width:auto;border-radius:6px;flex-shrink:0;}
+  .topbar-title{font-weight:700;font-size:1rem;}
+  .topbar-sub{color:var(--muted);font-size:.78rem;}
+  .lang-switch{margin-left:auto;display:flex;gap:6px;}
+  .lang-btn{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);color:var(--text);font-size:.75rem;font-weight:700;cursor:pointer;}
+  .lang-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+  .progress-wrap{max-width:640px;margin:0 auto;padding:18px 20px 0;}
+  .progress-track{height:6px;background:var(--panel2);border-radius:4px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--accent);border-radius:4px;transition:width .35s ease;}
+  .progress-label{display:flex;justify-content:space-between;color:var(--muted);font-size:.75rem;margin-top:6px;}
+
+  .stage{max-width:640px;margin:0 auto;padding:28px 20px 80px;}
+  .step{display:none;animation:fadeIn .3s ease;}
+  .step.active{display:block;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:28px 24px;box-shadow:0 2px 14px rgba(0,0,0,.05);}
+
+  .hero-banner{position:relative;width:100%;min-height:480px;border-radius:16px;overflow:hidden;display:flex;align-items:flex-end;}
+  .hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 15%;}
+  .hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,20,25,0) 0%, rgba(0,20,25,.25) 40%, rgba(0,22,26,.92) 100%);}
+  .hero-text{position:relative;z-index:1;width:100%;padding:28px 24px;color:#fff;}
+  .hero-eyebrow{color:#8fe6e0;font-weight:700;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;}
+  .hero-title{font-size:1.5rem;font-weight:800;line-height:1.3;margin:0 0 8px;color:#fff;}
+  .hero-help{color:rgba(255,255,255,.88);font-size:.9rem;line-height:1.5;margin:0 0 20px;}
+  .lang-selector{display:flex;gap:10px;flex-wrap:wrap;}
+  .lang-pill{flex:1;min-width:150px;display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(255,255,255,.14);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.5);border-radius:12px;padding:14px 16px;color:#fff;font-weight:800;font-size:.95rem;cursor:pointer;transition:background .15s ease;font-family:inherit;}
+  .lang-pill:hover{background:rgba(255,255,255,.28);}
+  .lang-pill svg{width:20px;height:20px;flex-shrink:0;color:#fff;}
+  @media (max-width:480px){
+    .hero-banner{min-height:400px;}
+    .lang-selector{flex-direction:column;}
   }
-  .no-prefix input{padding-left:12px;}
-  input:focus{outline:none;border-color:var(--accent);}
-  .btn-row{display:flex;gap:10px;margin-top:6px;}
-  button{cursor:pointer;border:none;border-radius:8px;font-weight:600;font-size:.92rem;padding:12px;}
+  .eyebrow{color:var(--accent);font-weight:700;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;}
+  .question{font-size:1.35rem;font-weight:800;line-height:1.3;margin:0 0 8px;color:var(--accent);}
+  .helptext{color:var(--muted);font-size:.9rem;line-height:1.5;margin:0 0 22px;}
+  .field-label{display:block;font-weight:700;font-size:.85rem;margin-bottom:8px;}
+  .label-row{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
+  .label-row .field-label{margin-bottom:0;}
+  .info-icon{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;color:var(--accent);cursor:pointer;flex-shrink:0;}
+  .info-icon svg{width:100%;height:100%;}
+  .info-icon:hover{color:var(--accent-dark);}
+
+  .input-big{position:relative;margin-bottom:18px;}
+  .input-big .prefix{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:600;}
+  .input-big .suffix{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:600;}
+  .input-big input{
+    width:100%;padding:16px 16px;font-size:1.5rem;font-weight:700;
+    border:2px solid var(--border);border-radius:12px;background:var(--input-bg);color:var(--text);
+    text-align:center;
+  }
+  .input-big.has-prefix input{padding-left:44px;}
+  .input-big.has-suffix input{padding-right:44px;}
+  .input-big input:focus{outline:none;border-color:var(--accent);}
+  .input-big.no-center input{text-align:left;font-size:1rem;font-weight:600;padding:14px 16px;}
+  .input-big.no-center input::placeholder{color:#b8b2a5;font-weight:400;}
+
+  .consent-row{display:flex;align-items:flex-start;gap:10px;font-size:.85rem;line-height:1.5;color:var(--text);cursor:pointer;margin-bottom:8px;}
+  .consent-row input[type=checkbox]{width:20px;height:20px;flex-shrink:0;accent-color:var(--accent);margin-top:1px;cursor:pointer;}
+
+  .btn-cta{width:100%;background:var(--accent);color:#fff;padding:16px;font-size:1rem;font-weight:800;border-radius:10px;margin-top:18px;box-shadow:0 4px 14px rgba(0,161,177,.35);}
+  .btn-cta:hover{background:var(--accent-dark);}
+
+  .btn-whatsapp{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:#25D366;color:#fff;padding:16px;font-size:1rem;font-weight:800;border-radius:10px;text-decoration:none;margin-top:8px;}
+  .btn-whatsapp:hover{background:#1ebe5a;}
+  .btn-whatsapp svg{width:22px;height:22px;flex-shrink:0;}
+
+  input[type=range]{
+    width:100%;height:6px;border-radius:4px;background:var(--panel2);
+    -webkit-appearance:none;margin:10px 0 4px;
+  }
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.3);}
+  input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.3);}
+  .range-labels{display:flex;justify-content:space-between;color:var(--muted);font-size:.75rem;}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;}
+  .chip{padding:8px 14px;border-radius:20px;border:1px solid var(--border);background:var(--panel2);color:var(--text);font-size:.82rem;font-weight:600;cursor:pointer;user-select:none;}
+  .chip:hover{border-color:var(--accent);}
+  .chip.selected{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+  .option-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px;}
+  @media (max-width:520px){.option-cards{grid-template-columns:1fr;}}
+  .option-card{border:2px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;}
+  .option-card.selected{border-color:var(--accent);background:#effaf9;}
+  .option-card h3{margin:0 0 6px;font-size:.98rem;}
+  .option-card p{margin:0;color:var(--muted);font-size:.8rem;line-height:1.4;}
+  .option-card .rate-tag{display:inline-block;margin-top:8px;font-size:.75rem;font-weight:700;color:var(--accent-dark);background:#e3f5f3;padding:3px 8px;border-radius:6px;}
+
+
+  .warn-box{background:var(--warnbg);border:1px solid #eccdb4;border-radius:10px;padding:12px 14px;font-size:.82rem;color:#8a4a1f;margin-bottom:16px;line-height:1.5;}
+  .info-box{background:#eef7f6;border:1px solid #c9e9e6;border-radius:10px;padding:12px 14px;font-size:.82rem;color:var(--accent-dark);margin-bottom:16px;line-height:1.5;}
+
+  .history-toggle{display:flex;align-items:center;gap:8px;color:var(--accent);font-weight:700;font-size:.85rem;cursor:pointer;margin-bottom:14px;}
+  .history-toggle svg{width:18px;height:18px;flex-shrink:0;}
+  .history-toggle:hover{color:var(--accent-dark);}
+  .history-box{background:var(--panel2);border-radius:10px;padding:14px;margin-bottom:18px;}
+  .history-table-wrap{overflow-x:auto;}
+  .history-table{width:100%;border-collapse:collapse;font-size:.82rem;}
+  .history-table th{text-align:left;color:var(--muted);font-weight:700;padding:4px 8px;border-bottom:1px solid var(--border);}
+  .history-table td{padding:4px 8px;border-bottom:1px dashed #ded6c4;}
+  .history-table tr:last-child td{border-bottom:none;}
+  .history-avg-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:.85rem;}
+  .history-avg-row strong{color:var(--accent);}
+  .btn-use-avg{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:.8rem;font-weight:700;cursor:pointer;}
+  .btn-use-avg:hover{background:var(--accent-dark);}
+
+  .nav-row{display:flex;gap:10px;margin-top:24px;}
+  button{cursor:pointer;border:none;border-radius:10px;font-weight:700;font-size:.95rem;padding:14px;font-family:inherit;}
   .btn-primary{flex:1;background:var(--accent);color:#fff;}
-  .btn-primary:hover{background:#008895;}
-  .btn-secondary{background:var(--panel2);color:var(--text);border:1px solid var(--border);padding:12px 18px;}
-  .btn-secondary:hover{background:#e5ded0;}
-  .results-col{display:flex;flex-direction:column;gap:20px;}
-  .summary-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.88rem;}
-  .summary-row:last-child{border-bottom:none;}
-  .summary-row span:first-child{color:var(--muted);}
-  h2{font-size:1rem;margin:0 0 14px;}
-  .result-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px dashed var(--border);}
-  .result-item:last-child{border-bottom:none;}
-  .result-label{color:var(--muted);font-size:.85rem;}
-  .result-value{font-weight:700;font-size:1rem;}
+  .btn-primary:hover{background:var(--accent-dark);}
+  .btn-primary:disabled{background:#cfcabf;cursor:not-allowed;}
+  .btn-back{background:var(--panel2);color:var(--text);border:1px solid var(--border);padding:14px 18px;}
+  .btn-back:hover{background:#e5ded0;}
+
+  /* Results */
+  .headline{text-align:center;margin-bottom:22px;}
+  .headline .label{color:var(--muted);font-size:.85rem;margin-bottom:4px;}
+  .headline .value{font-size:2.1rem;font-weight:800;color:var(--accent);}
+  .headline .sub{color:var(--muted);font-size:.85rem;margin-top:4px;}
+
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+  .stat{background:var(--panel2);border-radius:12px;padding:14px;}
+  .stat .stat-label{color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;}
+  .stat .stat-value{font-size:1.05rem;font-weight:800;}
+
+  details{border:1px solid var(--border);border-radius:12px;padding:4px 16px;margin-top:8px;}
+  summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:.88rem;color:var(--accent-dark);}
+  .result-item{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px dashed var(--border);font-size:.86rem;}
+  .result-item:last-child{border-bottom:none;padding-bottom:16px;}
+  .result-label{color:var(--muted);}
+  .result-value{font-weight:700;}
   .positive{color:var(--accent2);}
   .negative{color:var(--danger);}
-  .note{font-size:.78rem;color:var(--muted);background:var(--panel2);border-radius:8px;padding:10px 12px;margin-top:4px;}
-  .footnote{text-align:center;color:var(--muted);font-size:.75rem;margin-top:30px;}
-  .disclaimer{font-size:.72rem;color:var(--muted);text-align:center;margin-top:8px;}
+  .note{font-size:.75rem;color:var(--muted);margin-top:14px;text-align:center;}
+
+  .doc-list{list-style:none;margin:0 0 16px;padding:0;}
+  .doc-list li{display:flex;gap:8px;padding:7px 0;font-size:.85rem;border-bottom:1px dashed var(--border);}
+  .doc-list li:last-child{border-bottom:none;}
+  .doc-list li::before{content:"\2611";color:var(--accent-dark);flex-shrink:0;}
+
+  .restart-row{display:flex;gap:10px;margin-top:20px;}
+  .disclaimer{text-align:center;color:var(--muted);font-size:.72rem;max-width:640px;margin:20px auto 0;padding:0 20px;}
+  .disclaimer-link{color:var(--accent);font-weight:800;font-size:.78rem;text-decoration:underline;}
+  .disclaimer-link:hover{color:var(--accent-dark);}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>ASB Financing / Loan Calculator</h1>
-  <p class="subtitle">Project the potential returns of ASBF using Compounding or Rolling strategy, including Early Termination, and compare it against direct ASB savings.</p>
 
-  <div class="grid">
-    <div class="card">
-      <div class="tabs">
-        <div class="tab active" data-strategy="compounding">Compounding</div>
-        <div class="tab" data-strategy="rolling">Rolling</div>
-      </div>
+<div class="topbar">
+  <img src="bsn-logo.svg" alt="BSN" class="logo-img">
+  <div>
+    <div class="topbar-title">BSN ASB Term Financing</div>
+    <div class="topbar-sub" data-i18n="topbarSub">Guided Calculator</div>
+  </div>
+  <div class="lang-switch" id="langSwitch" style="display:none;">
+    <div class="lang-btn" data-lang="en" onclick="setLanguage('en')">EN</div>
+    <div class="lang-btn" data-lang="ms" onclick="setLanguage('ms')">BM</div>
+  </div>
+</div>
 
-      <div class="field">
-        <label>Financing / Loan Amount (RM)</label>
-        <div class="input-group"><span class="prefix">RM</span>
-          <input type="number" id="loanAmount" value="100000" min="0" step="1000">
+<div class="progress-wrap" id="progressWrap" style="display:none;">
+  <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="progress-label"><span id="progressStepLabel">Getting started</span><span id="progressPct">0%</span></div>
+</div>
+
+<div class="stage">
+
+  <!-- Step 0: language selection -->
+  <div class="step active" data-step="0">
+    <div class="hero-banner">
+      <img src="hero.png" alt="BSN ASB Term Financing" class="hero-bg">
+      <div class="hero-overlay"></div>
+      <div class="hero-text">
+        <div class="hero-eyebrow">Welcome</div>
+        <p class="hero-title">Choose your language / Pilih bahasa anda</p>
+        <p class="hero-help">Please select your preferred language to continue. / Sila pilih bahasa pilihan anda untuk teruskan.</p>
+        <div class="lang-selector">
+          <button type="button" class="lang-pill" onclick="setLanguage('en'); goTo(1);">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.9 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2s.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2s.07-1.35.16-2h4.68c.09.65.16 1.32.16 2s-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2s-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"/></svg>
+            <span>English</span>
+          </button>
+          <button type="button" class="lang-pill" onclick="setLanguage('ms'); goTo(1);">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.9 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2s.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2s.07-1.35.16-2h4.68c.09.65.16 1.32.16 2s-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2s-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"/></svg>
+            <span>Bahasa Melayu</span>
+          </button>
         </div>
-      </div>
-
-      <div class="row2">
-        <div class="field">
-          <label>Financing / Loan Tenure (Years)</label>
-          <div class="input-group no-prefix">
-            <input type="number" id="loanTenure" value="32" min="1" max="40" step="1">
-          </div>
-        </div>
-        <div class="field">
-          <label>Bank Profit / Interest Rate (%)</label>
-          <div class="input-group no-prefix">
-            <input type="number" id="interestRate" value="4.25" min="0" step="0.01">
-          </div>
-        </div>
-      </div>
-
-      <div class="row2">
-        <div class="field">
-          <label>Estimated ASB Dividend Rate (%)</label>
-          <div class="input-group no-prefix">
-            <input type="number" id="dividendRate" value="5.75" min="0" step="0.01">
-          </div>
-        </div>
-        <div class="field">
-          <label>Terminate after (Years)</label>
-          <div class="input-group no-prefix">
-            <input type="number" id="earlyTerminate" value="10" min="1" step="1">
-          </div>
-        </div>
-      </div>
-
-      <div class="btn-row">
-        <button class="btn-primary" id="calcBtn">Calculate</button>
-        <button class="btn-secondary" id="clearBtn">Clear</button>
-      </div>
-    </div>
-
-    <div class="results-col">
-      <div class="card">
-        <h2>Summary</h2>
-        <div id="summaryBox"></div>
-      </div>
-
-      <div class="card">
-        <h2 id="resultTitle">ASB Financing / Loan Result (Compounding)</h2>
-        <div id="resultBox"></div>
-      </div>
-
-      <div class="card">
-        <h2>Direct ASB Savings Comparison</h2>
-        <div id="directBox"></div>
-        <div class="note">*ASB Calculation based on Monthly Minimum Balance</div>
       </div>
     </div>
   </div>
 
-  <div class="footnote">Unofficial replica for illustration purposes only — not financial advice.</div>
-  <div style="text-align:center;margin-top:8px;"><a href="disclaimer.html" style="color:var(--accent);font-weight:800;font-size:.78rem;text-decoration:underline;">Full Disclaimer &amp; Limitation of Liability</a></div>
+  <!-- Step 1: intro -->
+  <div class="step" data-step="1">
+    <div class="card">
+      <div class="eyebrow" data-i18n="s1_eyebrow">Welcome</div>
+      <p class="question" data-i18n="s1_question">Let's see how ASB Financing could work for you.</p>
+      <p class="helptext" data-i18n="s1_help">Answer a few quick questions and we'll check your eligibility, show what documents you'll need, and project your potential returns from BSN ASB Term Financing.</p>
+      <div class="nav-row">
+        <button class="btn-primary" data-i18n="btn_getstarted" onclick="goTo(2)">Get Started</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2: eligibility -->
+  <div class="step" data-step="2">
+    <div class="card">
+      <div class="eyebrow" data-i18n="s2_eyebrow">Question 1 of 7</div>
+      <p class="question" data-i18n="s2_question">Quick eligibility check</p>
+      <p class="helptext" data-i18n="s2_help">BSN ASB Term Financing is open to all qualified ASB investors under ASNB guidelines, aged 18–70 at the end of the loan tenure.</p>
+
+      <div class="label-row">
+        <label class="field-label" data-i18n="s2_label1">Are you a qualified ASB investor (Bumiputera) under ASNB guidelines?</label>
+        <span class="info-icon" onclick="toggleGuidelineInfo()" title="ASNB Guidelines">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>
+        </span>
+      </div>
+      <div id="guidelineInfoBox" class="info-box" style="display:none;" data-i18n="guideline_info">ASB is a unit trust exclusively for Malaysian Bumiputera individuals as defined under the Federal Constitution, and open to Malaysian citizens holding a valid MyKad. An ASB account can be opened at any age (a minor's account is held in trust by a parent or guardian) — but this BSN financing product itself requires the applicant to be aged 18–70 at the end of the loan tenure.</div>
+      <div class="chips" id="chips_bumiputera" style="margin-bottom:20px;">
+        <div class="chip" data-val="yes" onclick="pickChip('bumiputera','yes')" data-i18n="chip_yes">Yes</div>
+        <div class="chip" data-val="no" onclick="pickChip('bumiputera','no')" data-i18n="chip_no">No</div>
+      </div>
+
+      <label class="field-label" data-i18n="s2_label2">What is your current age?</label>
+      <div class="input-big has-suffix"><input type="number" id="q_age" min="1" max="100" value="30"><span class="suffix" data-i18n="unit_yrs">yrs</span></div>
+
+      <div id="eligibilityWarning"></div>
+
+      <div class="nav-row">
+        <button class="btn-back" data-i18n="btn_back" onclick="goTo(1)">Back</button>
+        <button class="btn-primary" data-i18n="btn_next" onclick="validateEligibility()">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: employment type -->
+  <div class="step" data-step="3">
+    <div class="card">
+      <div class="eyebrow" data-i18n="s3_eyebrow">Question 2 of 7</div>
+      <p class="question" data-i18n="s3_question">What's your employment type?</p>
+      <p class="helptext" data-i18n="s3_help">This determines which documents you'll need to prepare for your application.</p>
+
+      <div class="option-cards" id="employmentCards">
+        <div class="option-card selected" data-val="employee" onclick="selectEmployment('employee')">
+          <h3 data-i18n="emp1_title">Permanent / Contract Employee</h3>
+          <p data-i18n="emp1_desc">Salaried employment with an employer.</p>
+        </div>
+        <div class="option-card" data-val="self" onclick="selectEmployment('self')">
+          <h3 data-i18n="emp2_title">Self-Employed</h3>
+          <p data-i18n="emp2_desc">Business owner, freelancer, or commission earner.</p>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-back" data-i18n="btn_back" onclick="goTo(2)">Back</button>
+        <button class="btn-primary" data-i18n="btn_next" onclick="goTo(4)">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4: loan amount -->
+  <div class="step" data-step="4">
+    <div class="card">
+      <div class="eyebrow" data-i18n="s4_eyebrow">Question 3 of 7</div>
+      <p class="question" data-i18n="s4_question">How much financing would you like to apply for?</p>
+      <p class="helptext" data-i18n="s4_help">BSN ASB Term Financing ranges from RM10,000 to RM200,000, in multiples of RM1,000.</p>
+      <div class="input-big has-prefix">
+        <span class="prefix">RM</span>
+        <input type="number" id="q_loanAmount" min="10000" max="200000" step="1000" value="100000" oninput="syncChips('loanAmount')">
+      </div>
+      <div class="chips" id="chips_loanAmount"></div>
+      <div id="loanAmountWarning"></div>
+      <div class="nav-row">
+        <button class="btn-back" data-i18n="btn_back" onclick="goTo(3)">Back</button>
+        <button class="btn-primary" data-i18n="btn_next" onclick="validateLoanAmount()">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 5: tenure -->
+  <div class="step" data-step="5">
+    <div class="card">
+      <div class="eyebrow" data-i18n="s5_eyebrow">Question 4 of 7</div>
+      <p class="question" data-i18n="s5_question">Over how many years would you like to finance this?</p>
+      <p class="helptext" id="tenureHelp" data-i18n="s5_help">BSN offers tenures from 5 up to 40 years. Longer tenures mean smaller monthly payments, but more total interest paid.</p>
+      <div class="input-big"><input type="number" id="q_loanTenure" min="5" max="40" value="20" oninput="syncSlider('loanTenure')"><span class="suffix" data-i18n="unit_yrs">yrs</span></div>
+      <input type="range" id="s_loanTenure" min="5" max="40" value="20" oninput="syncInput('loanTenure')">
+      <div class="range-labels"><span id="tenureMinLabel">5 yrs</span><span id="tenureMaxLabel">40 yrs</span></div>
+      <div class="nav-row">
+        <button class="btn-back" data-i18n="btn_back" onclick="goTo(4)">Back</button>
+        <button class="btn-primary" data-i18n="btn_next" onclick="validateAndNext('loanTenure',6)">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 6: takaful choice -->
+  <div class="step" data-step="6">
+    <div class="card">
+      <div class="eyebrow" data-i18n="s6_eyebrow">Question 5 of 7</div>
+      <p class="question" data-i18n="s6_question">Would you like Takaful (Insurance) coverage?</p>
+      <p class="helptext" data-i18n="s6_help">Takaful protects your family by settling the outstanding financing in case of death or total permanent disability. It also comes with a slightly lower profit rate.</p>
+
+      <div class="option-cards" id="takafulCards">
+        <div class="option-card selected" data-val="with" onclick="selectTakaful('with')">
+          <h3 data-i18n="tak1_title">With Takaful</h3>
+          <p data-i18n="tak1_desc">Financing protected against death / TPD.</p>
+          <span class="rate-tag">SBR + 1.40% = 4.15% p.a.</span>
+        </div>
+        <div class="option-card" data-val="without" onclick="selectTakaful('without')">
+          <h3 data-i18n="tak2_title">Without Takaful</h3>
+          <p data-i18n="tak2_desc">No insurance coverage on the financing.</p>
+          <span class="rate-tag">SBR + 1.50% = 4.25% p.a.</span>
+        </div>
+      </div>
+      <p class="note" style="text-align:left;margin-top:0;" data-i18n="s6_note">Based on current Standardised Base Rate (SBR) of 2.75% p.a.</p>
+
+      <div class="nav-row">
+        <button class="btn-back" data-i18n="btn_back" onclick="goTo(5)">Back</button>
+        <button class="btn-primary" data-i18n="btn_next" onclick="goTo(7)">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 7: dividend rate -->
+  <div class="step" data-step="7">
+    <div class="card">
+      <div class="eyebrow" data-i18n="s7_eyebrow">Question 6 of 7</div>
+      <p class="question" data-i18n="s7_question">What ASB dividend rate should we assume?</p>
+      <p class="helptext" data-i18n="s7_help">ASB dividends vary year to year. A common planning assumption is 5.0% – 6.0% p.a., based on recent history. This is only an estimate, not a guarantee.</p>
+
+      <div class="history-toggle" onclick="toggleDividendHistory()">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 3v18h18v-2H5V3H3zm4 14h2v-6H7v6zm4 0h2V7h-2v10zm4 0h2v-4h-2v4z"/></svg>
+        <span data-i18n="div_history_toggle">See ASB Dividend History (2015–2025)</span>
+      </div>
+      <div id="dividendHistoryBox" class="history-box" style="display:none;">
+        <div class="history-table-wrap">
+          <table class="history-table">
+            <thead><tr><th data-i18n="div_history_year">Year</th><th>ASB</th><th>ASB2</th></tr></thead>
+            <tbody>
+              <tr><td>2025</td><td>5.75%</td><td>5.50%</td></tr>
+              <tr><td>2024</td><td>5.75%</td><td>5.25%</td></tr>
+              <tr><td>2023</td><td>5.25%</td><td>5.00%</td></tr>
+              <tr><td>2022</td><td>5.10%</td><td>4.30%</td></tr>
+              <tr><td>2021</td><td>5.00%</td><td>4.25%</td></tr>
+              <tr><td>2020</td><td>5.00%</td><td>4.75%</td></tr>
+              <tr><td>2019</td><td>5.50%</td><td>6.00%</td></tr>
+              <tr><td>2018</td><td>7.00%</td><td>6.75%</td></tr>
+              <tr><td>2017</td><td>8.25%</td><td>6.50%</td></tr>
+              <tr><td>2016</td><td>7.25%</td><td>7.05%</td></tr>
+              <tr><td>2015</td><td>7.75%</td><td>7.75%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="history-avg-row">
+          <span data-i18n="div_history_avg_label">2015–2025 ASB average: <strong>6.15%</strong></span>
+          <button type="button" class="btn-use-avg" onclick="useAverageDividend()" data-i18n="div_history_use">Use this rate</button>
+        </div>
+        <p class="note" style="text-align:left;margin-top:8px;" data-i18n="div_history_note">Source: ASNB. Past performance is not indicative of future results.</p>
+      </div>
+
+      <div class="input-big has-suffix"><input type="number" id="q_dividendRate" min="0" step="0.01" value="5.75" oninput="syncSlider('dividendRate')"><span class="suffix">%</span></div>
+      <input type="range" id="s_dividendRate" min="1" max="10" step="0.05" value="5.75" oninput="syncInput('dividendRate')">
+      <div class="range-labels"><span>1%</span><span>10%</span></div>
+      <div class="nav-row">
+        <button class="btn-back" data-i18n="btn_back" onclick="goTo(6)">Back</button>
+        <button class="btn-primary" data-i18n="btn_next" onclick="validateAndNext('dividendRate',8)">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 8: strategy + terminate -->
+  <div class="step" data-step="8">
+    <div class="card">
+      <div class="eyebrow" data-i18n="s8_eyebrow">Question 7 of 7</div>
+      <p class="question" data-i18n="s8_question">Choose a strategy, and when you might exit.</p>
+      <p class="helptext" data-i18n="s8_help"><strong>Compounding</strong> lets your ASB dividends grow untouched. <strong>Rolling</strong> uses each year's dividend to help pay your instalment, only needing your own cash upfront in Year 1.</p>
+
+      <div class="option-cards" id="strategyCards">
+        <div class="option-card selected" data-val="compounding" onclick="selectStrategy('compounding')">
+          <h3>Compounding</h3>
+          <p data-i18n="strat1_desc">Dividends stay invested and grow year on year.</p>
+        </div>
+        <div class="option-card" data-val="rolling" onclick="selectStrategy('rolling')">
+          <h3>Rolling</h3>
+          <p data-i18n="strat2_desc">Dividends help cover your yearly instalment.</p>
+        </div>
+      </div>
+
+      <p class="helptext" style="margin-top:18px;" data-i18n="s8_help2">Terminate / exit after how many years?</p>
+      <div class="input-big"><input type="number" id="q_earlyTerminate" min="1" value="10" oninput="syncSlider('earlyTerminate')"><span class="suffix" data-i18n="unit_yrs">yrs</span></div>
+      <input type="range" id="s_earlyTerminate" min="1" max="40" value="10" oninput="syncInput('earlyTerminate')">
+      <div class="range-labels"><span id="terminateMin">1 yr</span><span id="terminateMax">40 yrs</span></div>
+
+      <div class="nav-row">
+        <button class="btn-back" data-i18n="btn_back" onclick="goTo(7)">Back</button>
+        <button class="btn-primary" data-i18n="btn_seeresults" onclick="showResults()">See My Results</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 9: results -->
+  <div class="step" data-step="9">
+    <div class="card">
+      <div class="eyebrow" id="resultStrategyLabel">Compounding Strategy</div>
+      <div class="headline">
+        <div class="label" data-i18n="res_headline">Estimated Total Returns</div>
+        <div class="value" id="hlReturns">RM 0.00</div>
+        <div class="sub" id="hlSub">after exiting</div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label" data-i18n="res_profit">Total Profit</div><div class="stat-value positive" id="stProfit">RM 0.00</div></div>
+        <div class="stat"><div class="stat-label" data-i18n="res_roi">ROI</div><div class="stat-value positive" id="stRoi">0%</div></div>
+        <div class="stat"><div class="stat-label" data-i18n="res_cashback">Cash Back</div><div class="stat-value" id="stCashback">RM 0.00</div></div>
+        <div class="stat"><div class="stat-label" data-i18n="res_yearly">Yearly Avg Return</div><div class="stat-value" id="stYearly">0%</div></div>
+      </div>
+
+      <details>
+        <summary data-i18n="res_breakdown">See full breakdown</summary>
+        <div id="fullResultBox"></div>
+      </details>
+
+      <details>
+        <summary data-i18n="res_compare">Compare with Direct ASB Savings</summary>
+        <div id="directResultBox"></div>
+      </details>
+
+      <details id="docsDetails">
+        <summary data-i18n="res_docs">Documents you'll need to apply</summary>
+        <div id="docsBox"></div>
+      </details>
+
+      <div class="note" data-i18n="res_note">*ASB dividend calculation based on Monthly Minimum Balance. Late Payment Charge: 1% p.a. on outstanding amount. Estimates only — actual dividends and rates may vary.</div>
+
+      <button class="btn-cta" data-i18n="btn_apply_now" onclick="goTo(10)">Apply for ASB Financing Now</button>
+
+      <div class="restart-row">
+        <button class="btn-back" data-i18n="btn_edit" onclick="goTo(8)">Edit Answers</button>
+        <button class="btn-primary" data-i18n="btn_restart" onclick="restart()">Start Over</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 10: lead capture -->
+  <div class="step" data-step="10">
+    <div class="card">
+      <div class="eyebrow" data-i18n="s10_eyebrow">Apply Now</div>
+      <p class="question" data-i18n="s10_question">Let's get you started.</p>
+      <p class="helptext" data-i18n="s10_help">Share your details and a BSN representative will reach out to help you with your application.</p>
+
+      <label class="field-label" data-i18n="lead_name_label">Full Name</label>
+      <div class="input-big no-center"><input type="text" id="q_leadName" placeholder="e.g. Ahmad bin Ali" autocomplete="name"></div>
+
+      <label class="field-label" data-i18n="lead_phone_label">Mobile Number</label>
+      <div class="input-big no-center"><input type="tel" id="q_leadPhone" placeholder="e.g. 012-3456789" autocomplete="tel"></div>
+
+      <label class="field-label" data-i18n="lead_email_label">Email</label>
+      <div class="input-big no-center"><input type="email" id="q_leadEmail" placeholder="e.g. ahmad@email.com" autocomplete="email"></div>
+
+      <label class="consent-row">
+        <input type="checkbox" id="q_leadConsent">
+        <span data-i18n="lead_consent">I agree for my data to be used to process this application.</span>
+      </label>
+
+      <div id="leadWarning"></div>
+
+      <div class="nav-row">
+        <button class="btn-back" data-i18n="btn_back" onclick="goTo(9)">Back</button>
+        <button class="btn-primary" data-i18n="btn_continue" onclick="validateLead()">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 11: WhatsApp handoff -->
+  <div class="step" data-step="11">
+    <div class="card">
+      <div class="eyebrow" data-i18n="s11_eyebrow">Almost Done</div>
+      <p class="question" data-i18n="s11_question">You're all set!</p>
+      <p class="helptext" data-i18n="s11_help">Tap the button below to send your details to a BSN representative on WhatsApp.</p>
+
+      <div id="leadSummaryBox" class="history-box"></div>
+
+      <a id="waButton" class="btn-whatsapp" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0 0 12.05 4C7.14 4 3.13 8 3.13 12.9c0 1.6.42 3.14 1.2 4.5L3 21l3.7-1.3a8.9 8.9 0 0 0 4.35 1.14h.01c4.91 0 8.92-4 8.92-8.9a8.84 8.84 0 0 0-2.38-6.62zM12.06 19.4h-.01a7.4 7.4 0 0 1-3.77-1.03l-.27-.16-2.8.97.94-2.72-.18-.28a7.36 7.36 0 0 1-1.14-3.94c0-4.08 3.33-7.4 7.44-7.4a7.4 7.4 0 0 1 5.26 2.17 7.32 7.32 0 0 1 2.17 5.23c0 4.08-3.33 7.4-7.44 7.4zm4.08-5.54c-.22-.11-1.32-.65-1.53-.72-.2-.08-.35-.11-.5.11-.15.22-.58.72-.7.87-.13.15-.26.16-.48.05-.22-.11-.94-.35-1.79-1.11-.66-.59-1.11-1.32-1.24-1.54-.13-.22-.01-.34.1-.45.1-.1.22-.26.33-.38.11-.13.15-.22.22-.37.07-.15.04-.28-.02-.39-.06-.11-.5-1.2-.68-1.65-.18-.43-.36-.37-.5-.38h-.43c-.15 0-.39.06-.59.28-.2.22-.77.75-.77 1.84s.79 2.13.9 2.28c.11.15 1.55 2.36 3.75 3.31.52.22.93.36 1.25.46.53.17 1.01.14 1.39.09.42-.06 1.32-.54 1.51-1.06.19-.52.19-.96.13-1.06-.06-.09-.2-.15-.42-.26z"/></svg>
+        <span data-i18n="btn_whatsapp">Chat on WhatsApp</span>
+      </a>
+
+      <div class="nav-row">
+        <button class="btn-back" data-i18n="btn_edit" onclick="goTo(10)">Edit Details</button>
+      </div>
+    </div>
+  </div>
+
 </div>
 
+<p class="disclaimer" id="disclaimerText" data-i18n="disclaimer">This guided tool provides illustrative projections only, for discussion purposes with a BSN representative. It does not constitute financial advice or a formal loan offer.</p>
+<p style="text-align:center;margin:10px 0 0;"><a href="disclaimer.html" class="disclaimer-link" data-i18n="disclaimer_link">Full Disclaimer &amp; Limitation of Liability</a></p>
+
 <script>
+const I18N = {
+  en: {
+    topbarSub: "Guided Calculator",
+    s1_eyebrow: "Welcome",
+    s1_question: "Let's see how ASB Financing could work for you.",
+    s1_help: "Answer a few quick questions and we'll check your eligibility, show what documents you'll need, and project your potential returns from BSN ASB Term Financing.",
+    btn_getstarted: "Get Started",
+    s2_eyebrow: "Question 1 of 7",
+    s2_question: "Quick eligibility check",
+    s2_help: "BSN ASB Term Financing is open to all qualified ASB investors under ASNB guidelines, aged 18–70 at the end of the loan tenure.",
+    s2_label1: "Are you a qualified ASB investor (Bumiputera) under ASNB guidelines?",
+    guideline_info: "ASB is a unit trust exclusively for Malaysian Bumiputera individuals as defined under the Federal Constitution, and open to Malaysian citizens holding a valid MyKad. An ASB account can be opened at any age (a minor's account is held in trust by a parent or guardian) — but this BSN financing product itself requires the applicant to be aged 18–70 at the end of the loan tenure.",
+    s2_label2: "What is your current age?",
+    chip_yes: "Yes", chip_no: "No",
+    unit_yrs: "yrs",
+    btn_back: "Back", btn_next: "Next",
+    s3_eyebrow: "Question 2 of 7",
+    s3_question: "What's your employment type?",
+    s3_help: "This determines which documents you'll need to prepare for your application.",
+    emp1_title: "Permanent / Contract Employee",
+    emp1_desc: "Salaried employment with an employer.",
+    emp2_title: "Self-Employed",
+    emp2_desc: "Business owner, freelancer, or commission earner.",
+    s4_eyebrow: "Question 3 of 7",
+    s4_question: "How much financing would you like to apply for?",
+    s4_help: "BSN ASB Term Financing ranges from RM10,000 to RM200,000, in multiples of RM1,000.",
+    s5_eyebrow: "Question 4 of 7",
+    s5_question: "Over how many years would you like to finance this?",
+    s5_help: "BSN offers financing tenures from 5 up to 40 years, capped at age 70, whichever comes first. Longer tenures mean smaller monthly payments, but a higher total interest paid.",
+    s6_eyebrow: "Question 5 of 7",
+    s6_question: "Would you like Takaful (Insurance) coverage?",
+    s6_help: "Takaful protects your family by settling the outstanding financing in case of death or total permanent disability. It also comes with a slightly lower profit rate.",
+    tak1_title: "With Takaful", tak1_desc: "Financing protected against death / TPD.",
+    tak2_title: "Without Takaful", tak2_desc: "No insurance coverage on the financing.",
+    s6_note: "Based on current Standardised Base Rate (SBR) of 2.75% p.a.",
+    s7_eyebrow: "Question 6 of 7",
+    s7_question: "What ASB dividend rate should we assume?",
+    s7_help: "ASB dividends vary year to year. A common planning assumption is 5.0% – 6.0% p.a., based on recent history. This is only an estimate, not a guarantee.",
+    div_history_toggle: "See ASB Dividend History (2015–2025)",
+    div_history_year: "Year",
+    div_history_avg_label: "2015–2025 ASB average: <strong>6.15%</strong>",
+    div_history_use: "Use this rate",
+    div_history_note: "Source: ASNB. Past performance is not indicative of future results.",
+    s8_eyebrow: "Question 7 of 7",
+    s8_question: "Choose a strategy, and when you might exit.",
+    s8_help: "<strong>Compounding</strong> lets your ASB dividends grow untouched. <strong>Rolling</strong> uses each year's dividend to help pay your instalment, only needing your own cash upfront in Year 1.",
+    strat1_desc: "Dividends stay invested and grow year on year.",
+    strat2_desc: "Dividends help cover your yearly instalment.",
+    s8_help2: "Terminate / exit after how many years?",
+    btn_seeresults: "See My Results",
+    res_headline: "Estimated Total Returns",
+    res_profit: "Total Profit", res_roi: "ROI", res_cashback: "Cash Back", res_yearly: "Yearly Avg Return",
+    res_breakdown: "See full breakdown",
+    res_compare: "Compare with Direct ASB Savings",
+    res_docs: "Documents you'll need to apply",
+    res_note: "*ASB dividend calculation based on Monthly Minimum Balance. Late Payment Charge: 1% p.a. on outstanding amount. Estimates only — actual dividends and rates may vary.",
+    btn_edit: "Edit Answers", btn_restart: "Start Over",
+    btn_apply_now: "Apply for ASB Financing Now",
+    s10_eyebrow: "Apply Now",
+    s10_question: "Let's get you started.",
+    s10_help: "Share your details and a BSN representative will reach out to help you with your application.",
+    lead_name_label: "Full Name",
+    lead_phone_label: "Mobile Number",
+    lead_email_label: "Email",
+    lead_consent: "I agree for my data to be used to process this application.",
+    err_consent_required: "Please tick the consent checkbox to continue.",
+    err_fill_fields: "Please fill in your name, mobile number, and a valid email to continue.",
+    btn_continue: "Continue",
+    s11_eyebrow: "Almost Done",
+    s11_question: "You're all set!",
+    s11_help: "Tap the button below to send your details to a BSN representative on WhatsApp.",
+    btn_whatsapp: "Chat on WhatsApp",
+    wa_message: (name,phone,email,amount,tenure,strategy,returns,years)=>
+      `Hi, I'm interested in applying for BSN ASB Term Financing.\n\nName: ${name}\nMobile: ${phone}\nEmail: ${email}\n\nSummary:\n- Financing Amount: ${amount}\n- Tenure: ${tenure} years\n- Strategy: ${strategy}\n- Estimated Total Returns: ${returns} (after ${years} year${years>1?'s':''})`,
+    disclaimer: "This guided tool provides illustrative projections only, for discussion purposes with a BSN representative. It does not constitute financial advice or a formal loan offer.",
+    disclaimer_link: "Full Disclaimer &amp; Limitation of Liability",
+    // dynamic
+    progress_getting_started: "Getting started",
+    progress_your_results: "Your Results",
+    progress_step: (n,m)=>`Step ${n} of ${m}`,
+    tenure_help_dyn: (max)=>`BSN offers financing tenures from 5 up to ${max} years, based on your age, so you stay within the 18–70 eligibility window. Longer tenures mean smaller monthly payments, but a higher total interest paid. The financing tenure is capped at a maximum of 40 years or until age 70, whichever comes first.`,
+    warn_not_bumiputera: "ASB and ASB Financing are only available to qualified Bumiputera investors under ASNB guidelines. You may not be eligible to apply.",
+    warn_under18: "Applicants must be at least 18 years old.",
+    warn_age_tenure: "Based on your age, you would not meet the minimum 5-year tenure requirement (must be 18–70 years old at the end of the loan tenure).",
+    warn_continue: "You can still continue to see an illustrative projection.",
+    err_select_option: "Please select an option to continue.",
+    info_min_amount: "Adjusted to the minimum financing amount of RM10,000.",
+    info_max_amount: "Adjusted to the maximum financing amount of RM200,000.",
+    strategy_compounding: "Compounding Strategy", strategy_rolling: "Rolling Strategy",
+    exit_after: (n)=>`Exit after ${n} year${n>1?'s':''}`,
+    financing_over: (amt,n)=>`on a ${amt} financing over ${n} year${n>1?'s':''}`,
+    row_monthlyPayment: "Monthly Payment", row_year1Payment: "Year 1 Payment", row_year1Dividend: "Year 1 Dividend",
+    row_totalPayment: "Total Payment", row_totalDividendEarned: "Total Dividend Earned", row_cashBack: "Cash Back Amount",
+    row_totalReturns: "Total Returns", row_totalProfitLoss: "Total Profit / Loss", row_roi: "Profit Percentage (ROI)",
+    row_yearlyAvg: "Yearly Average Return (%)", row_monthlyDeposit: "Monthly Deposit", row_year1Deposit: "Year 1 Deposit",
+    row_totalDeposited: "Total Deposited", row_totalProfitLoss2: "Total Profit/Loss",
+    surplus_note: (x)=>`Dividend covers annual payment with ${x} surplus`,
+    deficit_note: (x)=>`Dividend does not cover annual payment, ${x} top-up needed per year`,
+    topup_note: (x,n,y)=>`Annual top-up of ${x} deposited for ${n} year${n>1?'s':''}, total ${y}`,
+    docs_employee: [
+      '1 copy of NRIC (front and back)',
+      '1 copy of latest 1 month salary slip, OR payment voucher (with company stamp/letterhead) for the latest 3 months',
+      'Any 1 of: latest EPF statement, Employer Confirmation Letter, or latest EA/EC and e-filing form',
+    ],
+    docs_self: [
+      '1 copy of NRIC (front and back)',
+      '1 copy of latest 6 months bank statement',
+    ],
+    docs_certify: "All documents must be certified by BSN staff.",
+  },
+  ms: {
+    topbarSub: "Kalkulator Berpandu",
+    s1_eyebrow: "Selamat Datang",
+    s1_question: "Mari lihat bagaimana Pembiayaan ASB boleh membantu anda.",
+    s1_help: "Jawab beberapa soalan ringkas dan kami akan semak kelayakan anda, tunjukkan dokumen yang diperlukan, serta unjurkan potensi pulangan daripada Pembiayaan Bertempoh ASB BSN.",
+    btn_getstarted: "Mulakan",
+    s2_eyebrow: "Soalan 1 daripada 7",
+    s2_question: "Semakan kelayakan pantas",
+    s2_help: "Pembiayaan Bertempoh ASB BSN terbuka kepada semua pelabur ASB yang layak di bawah garis panduan ASNB, berumur 18–70 tahun pada akhir tempoh pinjaman.",
+    s2_label1: "Adakah anda pelabur ASB yang layak (Bumiputera) di bawah garis panduan ASNB?",
+    guideline_info: "ASB adalah amanah saham yang khusus untuk individu Bumiputera Malaysia seperti yang ditakrifkan di bawah Perlembagaan Persekutuan, dan terbuka kepada warganegara Malaysia yang memiliki MyKad yang sah. Akaun ASB boleh dibuka pada sebarang umur (akaun kanak-kanak dipegang secara amanah oleh ibu bapa/penjaga) — tetapi produk pembiayaan BSN ini sendiri memerlukan pemohon berumur 18–70 tahun pada akhir tempoh pinjaman.",
+    s2_label2: "Berapakah umur anda sekarang?",
+    chip_yes: "Ya", chip_no: "Tidak",
+    unit_yrs: "tahun",
+    btn_back: "Kembali", btn_next: "Seterusnya",
+    s3_eyebrow: "Soalan 2 daripada 7",
+    s3_question: "Apakah jenis pekerjaan anda?",
+    s3_help: "Ini menentukan dokumen yang perlu anda sediakan untuk permohonan.",
+    emp1_title: "Pekerja Tetap / Kontrak",
+    emp1_desc: "Pekerjaan bergaji dengan majikan.",
+    emp2_title: "Bekerja Sendiri",
+    emp2_desc: "Pemilik perniagaan, bebas (freelance), atau penerima komisen.",
+    s4_eyebrow: "Soalan 3 daripada 7",
+    s4_question: "Berapakah jumlah pembiayaan yang ingin anda mohon?",
+    s4_help: "Pembiayaan Bertempoh ASB BSN adalah dari RM10,000 sehingga RM200,000, dalam gandaan RM1,000.",
+    s5_eyebrow: "Soalan 4 daripada 7",
+    s5_question: "Berapa lamakah tempoh pembiayaan yang anda mahukan?",
+    s5_help: "BSN menawarkan tempoh pembiayaan dari 5 sehingga 40 tahun, tertakluk kepada had umur 70 tahun, mana-mana yang lebih awal. Tempoh yang lebih panjang bermakna bayaran bulanan yang lebih kecil, tetapi jumlah faedah keseluruhan yang lebih tinggi.",
+    s6_eyebrow: "Soalan 5 daripada 7",
+    s6_question: "Adakah anda mahukan perlindungan Takaful (Insurans)?",
+    s6_help: "Takaful melindungi keluarga anda dengan menyelesaikan baki pembiayaan sekiranya berlaku kematian atau hilang upaya kekal menyeluruh. Ia juga disertakan dengan kadar keuntungan yang sedikit lebih rendah.",
+    tak1_title: "Dengan Takaful", tak1_desc: "Pembiayaan dilindungi daripada risiko kematian / hilang upaya kekal.",
+    tak2_title: "Tanpa Takaful", tak2_desc: "Tiada perlindungan insurans ke atas pembiayaan.",
+    s6_note: "Berdasarkan Kadar Asas Standard (SBR) semasa 2.75% setahun.",
+    s7_eyebrow: "Soalan 6 daripada 7",
+    s7_question: "Apakah kadar dividen ASB yang perlu kita anggarkan?",
+    s7_help: "Dividen ASB berubah dari tahun ke tahun. Anggaran perancangan biasa adalah 5.0% – 6.0% setahun, berdasarkan sejarah terkini. Ini hanyalah anggaran, bukan jaminan.",
+    div_history_toggle: "Lihat Sejarah Dividen ASB (2015–2025)",
+    div_history_year: "Tahun",
+    div_history_avg_label: "Purata ASB 2015–2025: <strong>6.15%</strong>",
+    div_history_use: "Guna kadar ini",
+    div_history_note: "Sumber: ASNB. Prestasi lepas tidak menggambarkan hasil masa hadapan.",
+    s8_eyebrow: "Soalan 7 daripada 7",
+    s8_question: "Pilih strategi, dan bila anda mungkin keluar.",
+    s8_help: "<strong>Compounding</strong> membiarkan dividen ASB anda berkembang tanpa diganggu. <strong>Rolling</strong> menggunakan dividen setiap tahun untuk membantu bayar ansuran anda, hanya memerlukan wang tunai anda sendiri pada Tahun 1.",
+    strat1_desc: "Dividen kekal dilaburkan dan berkembang dari tahun ke tahun.",
+    strat2_desc: "Dividen membantu menampung ansuran tahunan anda.",
+    s8_help2: "Tamatkan / keluar selepas berapa tahun?",
+    btn_seeresults: "Lihat Keputusan Saya",
+    res_headline: "Anggaran Jumlah Pulangan",
+    res_profit: "Jumlah Keuntungan", res_roi: "ROI", res_cashback: "Tunai Dikembalikan", res_yearly: "Purata Pulangan Tahunan",
+    res_breakdown: "Lihat pecahan penuh",
+    res_compare: "Bandingkan dengan Simpanan ASB Terus",
+    res_docs: "Dokumen yang diperlukan untuk memohon",
+    res_note: "*Pengiraan dividen ASB berdasarkan Baki Minimum Bulanan. Caj Bayaran Lewat: 1% setahun ke atas baki tertunggak. Anggaran sahaja — dividen dan kadar sebenar mungkin berbeza.",
+    btn_edit: "Edit Jawapan", btn_restart: "Mula Semula",
+    btn_apply_now: "Mohon Pembiayaan ASB Sekarang",
+    s10_eyebrow: "Mohon Sekarang",
+    s10_question: "Mari kita mulakan.",
+    s10_help: "Kongsikan maklumat anda dan wakil BSN akan menghubungi anda untuk bantu proses permohonan.",
+    lead_name_label: "Nama Penuh",
+    lead_phone_label: "Nombor Telefon Bimbit",
+    lead_email_label: "Emel",
+    lead_consent: "Saya bersetuju untuk data saya digunakan untuk membuat permohonan ini.",
+    err_consent_required: "Sila tandakan kotak persetujuan untuk teruskan.",
+    err_fill_fields: "Sila isi nama, nombor telefon bimbit, dan emel yang sah untuk teruskan.",
+    btn_continue: "Teruskan",
+    s11_eyebrow: "Hampir Selesai",
+    s11_question: "Anda sudah bersedia!",
+    s11_help: "Ketik butang di bawah untuk hantar maklumat anda kepada wakil BSN melalui WhatsApp.",
+    btn_whatsapp: "Chat di WhatsApp",
+    wa_message: (name,phone,email,amount,tenure,strategy,returns,years)=>
+      `Assalamualaikum/Salam, saya berminat memohon BSN ASB Term Financing.\n\nNama: ${name}\nNo. Telefon: ${phone}\nEmel: ${email}\n\nRingkasan:\n- Jumlah Pembiayaan: ${amount}\n- Tempoh: ${tenure} tahun\n- Strategi: ${strategy}\n- Anggaran Jumlah Pulangan: ${returns} (selepas ${years} tahun)`,
+    disclaimer: "Alat berpandu ini hanya menyediakan unjuran ilustrasi untuk tujuan perbincangan dengan wakil BSN. Ia tidak membentuk nasihat kewangan atau tawaran pinjaman rasmi.",
+    disclaimer_link: "Disclaimer &amp; Had Liabiliti Penuh",
+    // dynamic
+    progress_getting_started: "Bermula",
+    progress_your_results: "Keputusan Anda",
+    progress_step: (n,m)=>`Langkah ${n} daripada ${m}`,
+    tenure_help_dyn: (max)=>`BSN menawarkan tempoh pembiayaan dari 5 sehingga ${max} tahun, berdasarkan umur anda supaya anda kekal dalam had kelayakan 18–70 tahun. Tempoh yang lebih panjang bermakna bayaran bulanan yang lebih kecil, tetapi jumlah faedah keseluruhan yang lebih tinggi. Tempoh pembiayaan adalah sehingga maksimum 40 tahun atau sehingga umur 70 tahun, tertakluk kepada mana-mana yang lebih awal.`,
+    warn_not_bumiputera: "ASB dan Pembiayaan ASB hanya disediakan untuk pelabur Bumiputera yang layak di bawah garis panduan ASNB. Anda mungkin tidak layak untuk memohon.",
+    warn_under18: "Pemohon mestilah berumur sekurang-kurangnya 18 tahun.",
+    warn_age_tenure: "Berdasarkan umur anda, anda tidak akan memenuhi keperluan tempoh minimum 5 tahun (mesti berumur 18–70 tahun pada akhir tempoh pinjaman).",
+    warn_continue: "Anda masih boleh teruskan untuk melihat unjuran ilustrasi.",
+    err_select_option: "Sila pilih satu pilihan untuk teruskan.",
+    info_min_amount: "Diselaraskan kepada jumlah pembiayaan minimum RM10,000.",
+    info_max_amount: "Diselaraskan kepada jumlah pembiayaan maksimum RM200,000.",
+    strategy_compounding: "Strategi Compounding", strategy_rolling: "Strategi Rolling",
+    exit_after: (n)=>`Keluar selepas ${n} tahun`,
+    financing_over: (amt,n)=>`untuk pembiayaan ${amt} sepanjang ${n} tahun`,
+    row_monthlyPayment: "Bayaran Bulanan", row_year1Payment: "Bayaran Tahun 1", row_year1Dividend: "Dividen Tahun 1",
+    row_totalPayment: "Jumlah Bayaran", row_totalDividendEarned: "Jumlah Dividen Diperoleh", row_cashBack: "Jumlah Tunai Dikembalikan",
+    row_totalReturns: "Jumlah Pulangan", row_totalProfitLoss: "Jumlah Untung / Rugi", row_roi: "Peratusan Keuntungan (ROI)",
+    row_yearlyAvg: "Purata Pulangan Tahunan (%)", row_monthlyDeposit: "Simpanan Bulanan", row_year1Deposit: "Simpanan Tahun 1",
+    row_totalDeposited: "Jumlah Disimpan", row_totalProfitLoss2: "Jumlah Untung/Rugi",
+    surplus_note: (x)=>`Dividen menampung bayaran tahunan dengan lebihan ${x}`,
+    deficit_note: (x)=>`Dividen tidak menampung bayaran tahunan, tambahan ${x} diperlukan setiap tahun`,
+    topup_note: (x,n,y)=>`Tambahan tahunan sebanyak ${x} disimpan selama ${n} tahun, jumlah ${y}`,
+    docs_employee: [
+      '1 salinan Kad Pengenalan (depan dan belakang)',
+      '1 salinan slip gaji bulan terkini, ATAU baucar bayaran (dengan cop/kepala surat syarikat) bagi 3 bulan terkini',
+      'Mana-mana 1 daripada: penyata KWSP terkini, Surat Pengesahan Majikan, atau borang EA/EC dan e-filing terkini',
+    ],
+    docs_self: [
+      '1 salinan Kad Pengenalan (depan dan belakang)',
+      '1 salinan penyata bank 6 bulan terkini',
+    ],
+    docs_certify: "Semua dokumen mesti disahkan oleh kakitangan BSN.",
+  }
+};
+
+let lang = 'en';
+function T(){ return I18N[lang]; }
+
+function setLanguage(l){
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active', b.dataset.lang===l));
+  document.getElementById('langSwitch').style.display = 'flex';
+  document.getElementById('progressWrap').style.display = 'block';
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.getAttribute('data-i18n');
+    if (T()[key] !== undefined) el.innerHTML = T()[key];
+  });
+  document.getElementById('terminateMin').textContent = '1 ' + (lang==='ms' ? 'tahun' : 'yr');
+  updateProgress();
+  // refresh dynamic labels if already past the relevant steps
+  if (document.getElementById('q_loanTenure').max){
+    const maxV = document.getElementById('q_loanTenure').max;
+    document.getElementById('tenureMaxLabel').textContent = maxV + ' ' + T().unit_yrs;
+    document.getElementById('tenureMinLabel').textContent = '5 ' + T().unit_yrs;
+  }
+  document.getElementById('terminateMax').textContent = document.getElementById('s_earlyTerminate').max + ' ' + T().unit_yrs;
+  if (currentStep===9 && lastResult){
+    renderResults(lastResult, lastDirect, lastYears);
+    renderDocs();
+  }
+}
+
+let state = {
+  bumiputera:null, age:30, employment:'employee',
+  loanAmount:100000, loanTenure:20, takaful:'with', interestRate:4.15,
+  dividendRate:5.75, earlyTerminate:10, strategy:'compounding'
+};
+let currentStep = 0;
+const TOTAL_STEPS = 7;
+let lastResult = null, lastDirect = null, lastYears = null;
+
+const amountChips = [10000,50000,100000,150000,200000];
+
+function renderChips(){
+  const box = document.getElementById('chips_loanAmount');
+  box.innerHTML = amountChips.map(v=>`<div class="chip" data-val="${v}" onclick="pickAmount(${v})">RM ${v.toLocaleString('en-MY')}</div>`).join('');
+  syncChips('loanAmount');
+}
+function pickAmount(v){
+  document.getElementById('q_loanAmount').value = v;
+  syncChips('loanAmount');
+}
+function syncChips(){
+  const val = parseFloat(document.getElementById('q_loanAmount').value);
+  document.querySelectorAll('#chips_loanAmount .chip').forEach(c=>{
+    c.classList.toggle('selected', parseFloat(c.dataset.val)===val);
+  });
+}
+
+function pickChip(group, val){
+  state[group] = val;
+  const box = document.getElementById(`chips_${group}`);
+  box.querySelectorAll('.chip').forEach(c=>{
+    c.classList.toggle('selected', c.dataset.val===val);
+  });
+  box.style.outline = '';
+  if (group==='bumiputera') document.getElementById('eligibilityWarning').innerHTML = '';
+}
+
+function toggleGuidelineInfo(){
+  const box = document.getElementById('guidelineInfoBox');
+  box.style.display = box.style.display==='none' ? 'block' : 'none';
+}
+
+function toggleDividendHistory(){
+  const box = document.getElementById('dividendHistoryBox');
+  box.style.display = box.style.display==='none' ? 'block' : 'none';
+}
+function useAverageDividend(){
+  document.getElementById('q_dividendRate').value = 6.15;
+  document.getElementById('s_dividendRate').value = 6.15;
+}
+
+const WA_NUMBER = '601154160187';
+
+function validateLead(){
+  const name = document.getElementById('q_leadName').value.trim();
+  const phoneRaw = document.getElementById('q_leadPhone').value.trim();
+  const email = document.getElementById('q_leadEmail').value.trim();
+  const consent = document.getElementById('q_leadConsent').checked;
+  const phoneDigits = phoneRaw.replace(/\D/g,'');
+
+  const nameEl = document.getElementById('q_leadName');
+  const phoneEl = document.getElementById('q_leadPhone');
+  const emailEl = document.getElementById('q_leadEmail');
+  nameEl.style.borderColor = ''; phoneEl.style.borderColor = ''; emailEl.style.borderColor = '';
+
+  let errors = [];
+  if (!name) { nameEl.style.borderColor = 'var(--danger)'; errors.push(1); }
+  if (phoneDigits.length < 9) { phoneEl.style.borderColor = 'var(--danger)'; errors.push(1); }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { emailEl.style.borderColor = 'var(--danger)'; errors.push(1); }
+  if (!consent) errors.push(1);
+
+  const warnBox = document.getElementById('leadWarning');
+  if (errors.length){
+    warnBox.innerHTML = `<div class="warn-box">${!consent ? T().err_consent_required : T().err_fill_fields}</div>`;
+    return;
+  }
+  warnBox.innerHTML = '';
+
+  state.leadName = name; state.leadPhone = phoneRaw; state.leadEmail = email;
+
+  const r = lastResult, years = lastYears;
+  const message = T().wa_message(
+    name, phoneRaw, email,
+    fmtRM(state.loanAmount), state.loanTenure,
+    (state.strategy==='compounding' ? T().strategy_compounding : T().strategy_rolling),
+    fmtRM(r.totalReturns), years
+  );
+  document.getElementById('waButton').href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`;
+
+  document.getElementById('leadSummaryBox').innerHTML = renderRows([
+    [T().lead_name_label, name],
+    [T().lead_phone_label, phoneRaw],
+    [T().lead_email_label, email],
+    [T().row_totalReturns, fmtRM(r.totalReturns)],
+  ]);
+
+  goTo(11);
+}
+
+function selectEmployment(v){
+  state.employment = v;
+  document.querySelectorAll('#employmentCards .option-card').forEach(c=>c.classList.toggle('selected', c.dataset.val===v));
+}
+function selectTakaful(v){
+  state.takaful = v;
+  state.interestRate = v==='with' ? 4.15 : 4.25;
+  document.querySelectorAll('#takafulCards .option-card').forEach(c=>c.classList.toggle('selected', c.dataset.val===v));
+}
+function selectStrategy(s){
+  state.strategy = s;
+  document.querySelectorAll('#strategyCards .option-card').forEach(c=>c.classList.toggle('selected', c.dataset.val===s));
+}
+
+function syncSlider(key){
+  const input = document.getElementById('q_'+key);
+  const slider = document.getElementById('s_'+key);
+  if (slider) slider.value = input.value;
+  if (key==='loanTenure'){
+    const term = document.getElementById('q_earlyTerminate');
+    const termSlider = document.getElementById('s_earlyTerminate');
+    const maxV = parseFloat(input.value)||40;
+    termSlider.max = maxV;
+    document.getElementById('terminateMax').textContent = maxV + ' ' + T().unit_yrs;
+    if (parseFloat(term.value) > maxV){ term.value = maxV; termSlider.value = maxV; }
+  }
+}
+function syncInput(key){
+  const slider = document.getElementById('s_'+key);
+  const input = document.getElementById('q_'+key);
+  input.value = slider.value;
+  if (key==='loanTenure') syncSlider(key);
+}
+
+function goTo(step){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.querySelector(`.step[data-step="${step}"]`).classList.add('active');
+  currentStep = step;
+  updateProgress();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function updateProgress(){
+  if (currentStep===0){
+    document.getElementById('progressFill').style.width = '0%';
+    document.getElementById('progressPct').textContent = '0%';
+    return;
+  }
+  const q = currentStep - 1; // question index (step1=intro=0, step2..8=questions 1..7, step9=results)
+  const shown = Math.min(Math.max(q,0),TOTAL_STEPS);
+  const pct = currentStep===1 ? 0 : Math.round((shown/TOTAL_STEPS)*100);
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressPct').textContent = pct+'%';
+  let label;
+  if (currentStep===1) label = T().progress_getting_started;
+  else if (currentStep===9) label = T().progress_your_results;
+  else if (currentStep===10) label = T().s10_eyebrow;
+  else if (currentStep===11) label = T().s11_eyebrow;
+  else label = T().progress_step(shown, TOTAL_STEPS);
+  document.getElementById('progressStepLabel').textContent = label;
+}
+
+// ---- Step 2: eligibility ----
+function validateEligibility(){
+  const chipsBox = document.getElementById('chips_bumiputera');
+  if (!state.bumiputera){
+    chipsBox.style.outline = '2px solid var(--danger)';
+    chipsBox.style.outlineOffset = '4px';
+    document.getElementById('eligibilityWarning').innerHTML = `<div class="warn-box">${T().err_select_option}</div>`;
+    return;
+  }
+  chipsBox.style.outline = '';
+
+  const age = parseFloat(document.getElementById('q_age').value);
+  if (isNaN(age) || age<=0){
+    document.getElementById('q_age').style.borderColor = 'var(--danger)';
+    return;
+  }
+  document.getElementById('q_age').style.borderColor = '';
+  state.age = age;
+
+  const maxTenureByAge = Math.max(0, 70 - age);
+  const warnBox = document.getElementById('eligibilityWarning');
+  let warnings = [];
+  if (state.bumiputera==='no') warnings.push(T().warn_not_bumiputera);
+  if (age < 18){
+    warnings.push(T().warn_under18);
+  } else if (maxTenureByAge < 5){
+    warnings.push(T().warn_age_tenure);
+  }
+  warnBox.innerHTML = warnings.length
+    ? `<div class="warn-box">${warnings.join('<br>')} ${T().warn_continue}</div>`
+    : '';
+  goTo(3);
+}
+
+// ---- Step 4: loan amount ----
+function validateLoanAmount(){
+  let val = parseFloat(document.getElementById('q_loanAmount').value);
+  const box = document.getElementById('loanAmountWarning');
+  if (isNaN(val) || val<=0){
+    document.getElementById('q_loanAmount').style.borderColor = 'var(--danger)';
+    return;
+  }
+  document.getElementById('q_loanAmount').style.borderColor = '';
+  let note = '';
+  if (val < 10000){ val = 10000; note = T().info_min_amount; }
+  if (val > 200000){ val = 200000; note = T().info_max_amount; }
+  val = Math.round(val/1000)*1000;
+  document.getElementById('q_loanAmount').value = val;
+  box.innerHTML = note ? `<div class="info-box">${note}</div>` : '';
+  state.loanAmount = val;
+
+  const maxTenureByAge = Math.max(5, Math.min(40, 70 - state.age));
+  document.getElementById('q_loanTenure').max = maxTenureByAge;
+  document.getElementById('s_loanTenure').max = maxTenureByAge;
+  document.getElementById('tenureMaxLabel').textContent = maxTenureByAge + ' ' + T().unit_yrs;
+  document.getElementById('tenureMinLabel').textContent = '5 ' + T().unit_yrs;
+  document.getElementById('tenureHelp').textContent = T().tenure_help_dyn(maxTenureByAge);
+  const curTenure = parseFloat(document.getElementById('q_loanTenure').value);
+  if (curTenure > maxTenureByAge){
+    document.getElementById('q_loanTenure').value = maxTenureByAge;
+    document.getElementById('s_loanTenure').value = maxTenureByAge;
+  }
+
+  goTo(5);
+}
+
+function validateAndNext(key, toStep){
+  const el = document.getElementById('q_'+key);
+  const val = parseFloat(el.value);
+  if (isNaN(val) || val<=0){
+    el.style.borderColor = 'var(--danger)';
+    el.focus();
+    return;
+  }
+  el.style.borderColor = '';
+  state[key] = val;
+  goTo(toStep);
+}
+
+// ---- calculation engine ----
+const round2 = n => Math.round((n + Number.EPSILON) * 100) / 100;
 const fmtRM = n => 'RM ' + n.toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2});
 const fmtPct = n => n.toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2}) + '%';
-const round2 = n => Math.round((n + Number.EPSILON) * 100) / 100;
-
-let strategy = 'compounding';
-
-document.querySelectorAll('.tab').forEach(tab=>{
-  tab.addEventListener('click', ()=>{
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    tab.classList.add('active');
-    strategy = tab.dataset.strategy;
-    calculate();
-  });
-});
-
-document.getElementById('calcBtn').addEventListener('click', calculate);
-document.getElementById('clearBtn').addEventListener('click', ()=>{
-  document.getElementById('loanAmount').value = '';
-  document.getElementById('loanTenure').value = '';
-  document.getElementById('interestRate').value = '';
-  document.getElementById('dividendRate').value = '';
-  document.getElementById('earlyTerminate').value = '';
-  document.getElementById('summaryBox').innerHTML = '';
-  document.getElementById('resultBox').innerHTML = '';
-  document.getElementById('directBox').innerHTML = '';
-});
 
 function monthlyPayment(P, annualRatePct, tenureYears){
   const r = (annualRatePct/100)/12;
@@ -175,8 +1018,6 @@ function monthlyPayment(P, annualRatePct, tenureYears){
   const M = P*r*Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
   return round2(M);
 }
-
-// Outstanding loan balance after `monthsElapsed`, interest rounded to cents each month (matches bank statements)
 function outstandingBalance(P, annualRatePct, M, monthsElapsed){
   const r = (annualRatePct/100)/12;
   let balance = P;
@@ -187,8 +1028,6 @@ function outstandingBalance(P, annualRatePct, M, monthsElapsed){
   }
   return balance;
 }
-
-// Direct ASB: monthly deposits, dividend on monthly minimum balance, credited & compounded annually
 function directASBMonthlyDeposits(depositAmount, dividendRatePct, years){
   const monthlyRate = (dividendRatePct/100)/12;
   let balance = 0, totalDividend = 0;
@@ -204,71 +1043,48 @@ function directASBMonthlyDeposits(depositAmount, dividendRatePct, years){
   return {balance, totalDividend};
 }
 
-function calculate(){
-  const P = parseFloat(document.getElementById('loanAmount').value) || 0;
-  const tenure = parseFloat(document.getElementById('loanTenure').value) || 0;
-  const interestRate = parseFloat(document.getElementById('interestRate').value) || 0;
-  const dividendRate = parseFloat(document.getElementById('dividendRate').value) || 0;
-  let years = parseFloat(document.getElementById('earlyTerminate').value) || 0;
-  if (!P || !tenure || years<=0) return;
-  years = Math.min(years, tenure);
+function showResults(){
+  const term = parseFloat(document.getElementById('q_earlyTerminate').value);
+  if (isNaN(term) || term<=0){
+    document.getElementById('q_earlyTerminate').style.borderColor='var(--danger)';
+    return;
+  }
+  state.earlyTerminate = Math.min(term, state.loanTenure);
+
+  const P = state.loanAmount, tenure = state.loanTenure, interestRate = state.interestRate,
+        dividendRate = state.dividendRate, years = state.earlyTerminate;
 
   const M = monthlyPayment(P, interestRate, tenure);
   const monthsElapsed = years*12;
   const outstanding = outstandingBalance(P, interestRate, M, monthsElapsed);
   const cashBack = round2(P - outstanding);
 
-  renderSummary(P, tenure, interestRate, years, dividendRate);
+  let result, direct;
 
-  if (strategy === 'compounding'){
-    document.getElementById('resultTitle').textContent = 'ASB Financing / Loan Result (Compounding)';
+  if (state.strategy === 'compounding'){
     const totalPayment = round2(M*monthsElapsed);
     const totalDividendEarned = round2(P*Math.pow(1+dividendRate/100, years) - P);
     const totalReturns = round2(totalDividendEarned + cashBack);
     const totalProfit = round2(totalReturns - totalPayment);
     const roi = (totalProfit/totalPayment)*100;
     const yearlyAvg = (Math.pow(totalReturns/totalPayment, 1/years)-1)*100;
+    result = {monthlyPayment:M, totalPayment, totalDividendEarned, cashBack, totalReturns, totalProfit, roi, yearlyAvg};
 
-    renderResult([
-      ['Monthly Payment', fmtRM(M)],
-      ['Total Payment', fmtRM(totalPayment)],
-      ['Total Dividend Earned', fmtRM(totalDividendEarned)],
-      ['Cash Back Amount', fmtRM(cashBack)],
-      ['Total Returns', fmtRM(totalReturns)],
-      ['Total Profit / Loss', fmtRM(totalProfit), totalProfit>=0],
-      ['Profit Percentage (ROI)', fmtPct(roi), roi>=0],
-      ['Yearly Average Return (%)', fmtPct(yearlyAvg), yearlyAvg>=0],
-    ]);
-
-    const direct = directASBMonthlyDeposits(M, dividendRate, years);
+    const d = directASBMonthlyDeposits(M, dividendRate, years);
     const dTotalDeposited = round2(M*monthsElapsed);
-    const dTotalDividend = round2(direct.totalDividend);
-    const dTotalReturns = round2(dTotalDeposited + dTotalDividend);
-    const dProfit = dTotalDividend;
-    const dRoi = (dProfit/dTotalDeposited)*100;
-    const dYearlyAvg = (Math.pow(dTotalReturns/dTotalDeposited, 1/years)-1)*100;
-
-    renderDirect([
-      ['Monthly Deposit', fmtRM(M)],
-      ['Total Deposited', fmtRM(dTotalDeposited)],
-      ['Total Dividend Earned', fmtRM(dTotalDividend)],
-      ['Total Returns', fmtRM(dTotalReturns)],
-      ['Total Profit/Loss', fmtRM(dProfit), dProfit>=0],
-      ['Profit Percentage (ROI)', fmtPct(dRoi), dRoi>=0],
-      ['Yearly Average Return (%)', fmtPct(dYearlyAvg), dYearlyAvg>=0],
-    ]);
+    const dTotalDividend = round2(d.totalDividend);
+    const dTotalReturns = round2(dTotalDeposited+dTotalDividend);
+    const dRoi = (dTotalDividend/dTotalDeposited)*100;
+    const dYearlyAvg = (Math.pow(dTotalReturns/dTotalDeposited,1/years)-1)*100;
+    direct = {monthlyDeposit:M, totalDeposited:dTotalDeposited, totalDividendEarned:dTotalDividend, totalReturns:dTotalReturns, profit:dTotalDividend, roi:dRoi, yearlyAvg:dYearlyAvg};
 
   } else {
-    document.getElementById('resultTitle').textContent = 'ASB Financing / Loan Result (Rolling)';
     const annualPayment = round2(M*12);
     const year1Dividend = round2(P*dividendRate/100);
     const diff = round2(year1Dividend - annualPayment);
-
     let totalDividend, totalPayment;
 
     if (diff >= 0){
-      // Surplus: dividend covers the payment every year, so the surplus reinvests and compounds.
-      // Only Year 1 ever needs out-of-pocket cash.
       let balance = P;
       totalDividend = year1Dividend;
       balance += diff;
@@ -281,8 +1097,6 @@ function calculate(){
       totalDividend = round2(totalDividend);
       totalPayment = annualPayment;
     } else {
-      // Deficit: dividend never covers the payment, so the balance doesn't grow — the same
-      // shortfall must be topped up out-of-pocket every remaining year.
       const topup = round2(annualPayment - year1Dividend);
       totalDividend = year1Dividend;
       totalPayment = round2(annualPayment + topup*(years-1));
@@ -293,119 +1107,137 @@ function calculate(){
     const roi = (totalProfit/totalPayment)*100;
     const yearlyAvg = (Math.pow(totalReturns/totalPayment, 1/years)-1)*100;
 
-    const surplusNote = diff >= 0
-      ? `Dividend covers annual payment with ${fmtRM(diff)} surplus`
-      : `Dividend does not cover annual payment, ${fmtRM(Math.abs(diff))} top-up needed per year`;
+    result = {monthlyPayment:M, year1Payment:annualPayment, year1Dividend, diff, totalPayment, totalDividendEarned:totalDividend, cashBack, totalReturns, totalProfit, roi, yearlyAvg};
 
-    const rows = [
-      ['Monthly Payment', fmtRM(M)],
-      ['Year 1 Payment', fmtRM(annualPayment)],
-      ['Year 1 Dividend', fmtRM(year1Dividend)],
-      [null, surplusNote],
-    ];
-    rows.push(
-      ['Total Payment', fmtRM(totalPayment)],
-      ['Total Dividend Earned', fmtRM(totalDividend)],
-      ['Cash Back Amount', fmtRM(cashBack)],
-      ['Total Returns', fmtRM(totalReturns)],
-      ['Total Profit / Loss', fmtRM(totalProfit), totalProfit>=0],
-      ['Profit Percentage (ROI)', fmtPct(roi), roi>=0],
-      ['Yearly Average Return (%)', fmtPct(yearlyAvg), yearlyAvg>=0],
-    );
-    renderResult(rows);
-
-    // Direct ASB (Rolling)
     const y1 = directASBMonthlyDeposits(M, dividendRate, 1);
-    let dTotalDeposited, dTotalReturns, dDirectNote = null;
-
+    let dTotalDeposited, dTotalReturns, dTopup = null;
     if (diff >= 0){
-      // Year 1 monthly deposits, then let it compound with no further deposits
       dTotalDeposited = round2(M*12);
       let dBalance = y1.balance;
       for (let y=2;y<=years;y++){ dBalance = dBalance*(1+dividendRate/100); }
       dTotalReturns = round2(dBalance);
     } else {
-      // Year 1 monthly deposits, then top up the same shortfall as a lump sum at the start of each year
       const topup = round2(annualPayment - year1Dividend);
       let dBalance = y1.balance;
-      for (let y=2;y<=years;y++){
-        dBalance += topup;
-        dBalance += dBalance*dividendRate/100;
-      }
+      for (let y=2;y<=years;y++){ dBalance += topup; dBalance += dBalance*dividendRate/100; }
       dTotalReturns = round2(dBalance);
-      dTotalDeposited = totalPayment; // same cash outlay pattern as the financing side
-      if (years>1) dDirectNote = `Annual top-up of ${fmtRM(topup)} deposited for ${years-1} year${years-1>1?'s':''}, total ${fmtRM(round2(topup*(years-1)))}`;
+      dTotalDeposited = totalPayment;
+      if (years>1) dTopup = topup;
     }
     const dTotalDividend = round2(dTotalReturns - dTotalDeposited);
     const dRoi = (dTotalDividend/dTotalDeposited)*100;
     const dYearlyAvg = (Math.pow(dTotalReturns/dTotalDeposited, 1/years)-1)*100;
-
-    const drows = [
-      ['Monthly Deposit', fmtRM(M)],
-      ['Year 1 Deposit', fmtRM(round2(M*12))],
-      ['Year 1 Dividend', fmtRM(year1Dividend)],
-    ];
-    if (dDirectNote) drows.push([null, dDirectNote]);
-    drows.push(
-      ['Total Deposited', fmtRM(dTotalDeposited)],
-      ['Total Dividend Earned', fmtRM(dTotalDividend)],
-      ['Total Returns', fmtRM(dTotalReturns)],
-      ['Total Profit/Loss', fmtRM(dTotalDividend), dTotalDividend>=0],
-      ['Profit Percentage (ROI)', fmtPct(dRoi), dRoi>=0],
-      ['Yearly Average Return (%)', fmtPct(dYearlyAvg), dYearlyAvg>=0],
-    );
-    renderDirect(drows);
+    direct = {monthlyDeposit:M, year1Deposit:round2(M*12), year1Dividend, dTopup, totalDeposited:dTotalDeposited, totalDividendEarned:dTotalDividend, totalReturns:dTotalReturns, profit:dTotalDividend, roi:dRoi, yearlyAvg:dYearlyAvg};
   }
+
+  lastResult = result; lastDirect = direct; lastYears = years;
+  renderResults(result, direct, years);
+  renderDocs();
+  goTo(9);
 }
 
-function renderSummary(P, tenure, interestRate, years, dividendRate){
-  const rows = [
-    ['Financing / Loan Amount', fmtRM(P)],
-    ['Financing / Loan Tenure', tenure + ' years'],
-    ['Bank Profit / Interest Rate', dividendPct(interestRate)],
-    ['Early Termination after', years + ' years'],
-    ['Estimated ASB Dividend Rate', dividendPct(dividendRate)],
-  ];
-  document.getElementById('summaryBox').innerHTML = rows.map(([l,v])=>
-    `<div class="summary-row"><span>${l}</span><span>${v}</span></div>`).join('');
-}
-function dividendPct(n){ return n.toLocaleString('en-MY',{minimumFractionDigits:2,maximumFractionDigits:2}) + '%'; }
+function renderResults(r, d, years){
+  document.getElementById('resultStrategyLabel').textContent =
+    (state.strategy==='compounding' ? T().strategy_compounding : T().strategy_rolling) + ' · ' + T().exit_after(years);
 
-function renderResult(rows){
-  document.getElementById('resultBox').innerHTML = rows.map(([label,value,positive])=>{
+  document.getElementById('hlReturns').textContent = fmtRM(r.totalReturns);
+  document.getElementById('hlSub').textContent = T().financing_over(fmtRM(state.loanAmount), years);
+
+  document.getElementById('stProfit').textContent = fmtRM(r.totalProfit);
+  document.getElementById('stProfit').className = 'stat-value ' + (r.totalProfit>=0?'positive':'negative');
+  document.getElementById('stRoi').textContent = fmtPct(r.roi);
+  document.getElementById('stRoi').className = 'stat-value ' + (r.roi>=0?'positive':'negative');
+  document.getElementById('stCashback').textContent = fmtRM(r.cashBack);
+  document.getElementById('stYearly').textContent = fmtPct(r.yearlyAvg);
+
+  let rows = [[T().row_monthlyPayment, fmtRM(r.monthlyPayment)]];
+  if (state.strategy==='rolling'){
+    rows.push([T().row_year1Payment, fmtRM(r.year1Payment)]);
+    rows.push([T().row_year1Dividend, fmtRM(r.year1Dividend)]);
+    const surplusNote = r.diff >= 0 ? T().surplus_note(fmtRM(r.diff)) : T().deficit_note(fmtRM(Math.abs(r.diff)));
+    rows.push([null, surplusNote]);
+  }
+  rows = rows.concat([
+    [T().row_totalPayment, fmtRM(r.totalPayment)],
+    [T().row_totalDividendEarned, fmtRM(r.totalDividendEarned)],
+    [T().row_cashBack, fmtRM(r.cashBack)],
+    [T().row_totalReturns, fmtRM(r.totalReturns)],
+    [T().row_totalProfitLoss, fmtRM(r.totalProfit), r.totalProfit>=0],
+    [T().row_roi, fmtPct(r.roi), r.roi>=0],
+    [T().row_yearlyAvg, fmtPct(r.yearlyAvg), r.yearlyAvg>=0],
+  ]);
+  document.getElementById('fullResultBox').innerHTML = renderRows(rows);
+
+  let drows = [[T().row_monthlyDeposit, fmtRM(d.monthlyDeposit)]];
+  if (state.strategy==='rolling'){
+    drows.push([T().row_year1Deposit, fmtRM(d.year1Deposit)]);
+    drows.push([T().row_year1Dividend, fmtRM(d.year1Dividend)]);
+    if (d.dTopup) drows.push([null, T().topup_note(fmtRM(d.dTopup), years-1, fmtRM(round2(d.dTopup*(years-1))))]);
+  }
+  drows = drows.concat([
+    [T().row_totalDeposited, fmtRM(d.totalDeposited)],
+    [T().row_totalDividendEarned, fmtRM(d.totalDividendEarned)],
+    [T().row_totalReturns, fmtRM(d.totalReturns)],
+    [T().row_totalProfitLoss2, fmtRM(d.profit), d.profit>=0],
+    [T().row_roi, fmtPct(d.roi), d.roi>=0],
+    [T().row_yearlyAvg, fmtPct(d.yearlyAvg), d.yearlyAvg>=0],
+  ]);
+  document.getElementById('directResultBox').innerHTML = renderRows(drows);
+}
+
+function renderRows(rows){
+  return rows.map(([label,value,positive])=>{
     if (label === null){
-      return `<div class="note">${value}</div>`;
+      return `<div class="note" style="text-align:left;margin-top:4px;">${value}</div>`;
     }
     const cls = positive===undefined ? '' : (positive ? 'positive' : 'negative');
     return `<div class="result-item"><span class="result-label">${label}</span><span class="result-value ${cls}">${value}</span></div>`;
   }).join('');
 }
-function renderDirect(rows){
-  document.getElementById('directBox').innerHTML = rows.map(([label,value,positive])=>{
-    if (label === null){
-      return `<div class="note">${value}</div>`;
-    }
-    const cls = positive===undefined ? '' : (positive ? 'positive' : 'negative');
-    return `<div class="result-item"><span class="result-label">${label}</span><span class="result-value ${cls}">${value}</span></div>`;
-  }).join('');
+
+function renderDocs(){
+  const list = (state.employment==='self') ? T().docs_self : T().docs_employee;
+  document.getElementById('docsBox').innerHTML =
+    `<ul class="doc-list">${list.map(d=>`<li>${d}</li>`).join('')}</ul>
+     <div class="note" style="text-align:left;margin-top:0;">${T().docs_certify}</div>`;
 }
 
-// Load values from URL query params, matching the original calculator's URL scheme
-function loadFromQuery(){
-  const params = new URLSearchParams(window.location.search);
-  const map = {loanAmount:'loanAmount', loanTenure:'loanTenure', interestRate:'interestRate', dividendRate:'dividendRate', earlyTerminate:'earlyTerminate'};
-  let any=false;
-  for (const key in map){
-    if (params.has(key)){
-      document.getElementById(map[key]).value = params.get(key);
-      any=true;
-    }
-  }
-  return any;
+function restart(){
+  state = {
+    bumiputera:null, age:30, employment:'employee',
+    loanAmount:100000, loanTenure:20, takaful:'with', interestRate:4.15,
+    dividendRate:5.75, earlyTerminate:10, strategy:'compounding'
+  };
+  document.querySelectorAll('#chips_bumiputera .chip').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('q_age').value = 30;
+  selectEmployment('employee');
+  document.getElementById('q_loanAmount').value = 100000;
+  document.getElementById('loanAmountWarning').innerHTML = '';
+  document.getElementById('q_loanTenure').value = 20;
+  document.getElementById('q_loanTenure').max = 40;
+  document.getElementById('s_loanTenure').value = 20;
+  document.getElementById('s_loanTenure').max = 40;
+  document.getElementById('tenureMaxLabel').textContent = '40 ' + T().unit_yrs;
+  document.getElementById('tenureMinLabel').textContent = '5 ' + T().unit_yrs;
+  selectTakaful('with');
+  document.getElementById('q_dividendRate').value = 5.75;
+  document.getElementById('s_dividendRate').value = 5.75;
+  document.getElementById('q_earlyTerminate').value = 10;
+  document.getElementById('s_earlyTerminate').value = 10;
+  document.getElementById('s_earlyTerminate').max = 20;
+  document.getElementById('terminateMax').textContent = '20 ' + T().unit_yrs;
+  document.getElementById('eligibilityWarning').innerHTML = '';
+  selectStrategy('compounding');
+  syncChips();
+  document.getElementById('q_leadName').value = '';
+  document.getElementById('q_leadPhone').value = '';
+  document.getElementById('q_leadEmail').value = '';
+  document.getElementById('q_leadConsent').checked = false;
+  document.getElementById('leadWarning').innerHTML = '';
+  goTo(1);
 }
 
-loadFromQuery();
-calculate();
+renderChips();
 </script>
 </body>
 </html>
