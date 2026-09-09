@@ -182,9 +182,30 @@
   .disclaimer{text-align:center;color:var(--muted);font-size:.72rem;max-width:640px;margin:20px auto 0;padding:0 20px;}
   .disclaimer-link{color:var(--accent);font-weight:800;font-size:.78rem;text-decoration:underline;}
   .disclaimer-link:hover{color:var(--accent-dark);}
+
+  .notice-overlay{position:fixed;inset:0;background:rgba(0,20,25,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;}
+  .notice-overlay[hidden]{display:none;}
+  .notice-card{background:var(--panel);border-radius:16px;padding:26px 24px;max-width:480px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.25);}
+  .notice-title{color:var(--accent);font-weight:800;font-size:1.1rem;margin:0 0 12px;text-align:center;}
+  .notice-body p{font-size:.85rem;line-height:1.6;color:var(--text);margin:0 0 12px;}
+  .notice-body p:last-child{margin-bottom:0;}
+  .notice-btn{width:100%;background:var(--accent);color:#fff;padding:13px;font-size:.92rem;font-weight:800;border:none;border-radius:10px;cursor:pointer;margin-top:16px;}
+  .notice-btn:hover{background:var(--accent-dark);}
 </style>
 </head>
 <body>
+
+<div class="notice-overlay" id="noticeOverlay" hidden>
+  <div class="notice-card">
+    <div class="lang-switch" style="margin:0 0 10px;">
+      <div class="lang-btn active" data-notice-lang="en" onclick="setNoticeLang('en')">EN</div>
+      <div class="lang-btn" data-notice-lang="ms" onclick="setNoticeLang('ms')">BM</div>
+    </div>
+    <p class="notice-title" id="noticeTitle">NOTICE</p>
+    <div class="notice-body" id="noticeBody"></div>
+    <button type="button" class="notice-btn" id="noticeBtn" onclick="dismissNotice()">I Understand</button>
+  </div>
+</div>
 
 <div class="topbar">
   <img src="bsn-logo.svg" alt="BSN" class="logo-img">
@@ -1255,6 +1276,43 @@ function restart(){
 }
 
 renderChips();
+</script>
+
+<script>
+// Self-contained notice popup — deliberately independent of the app's own
+// setLanguage()/state, since that only activates after the user picks a
+// language on Step 0 and has side effects (reveals the progress bar, etc.)
+// that shouldn't fire before the notice is even acknowledged.
+const NOTICE_CONTENT = {
+  en: {
+    title: 'NOTICE',
+    body: '<p>This website is not the official website of Bank Simpanan Nasional (BSN). This website was developed by a Retail Banking officer of Bank Simpanan Nasional (BSN) to facilitate enquiries, estimate calculations, and pre-registration of financing applications.</p><p>Any calculation, simulation, or information displayed on this website is for estimation and reference purposes only, and should not be regarded as an offer or a final financing decision.</p><p>Approval and financing terms are subject to BSN\'s assessment and approval, including review of financial records, applicant eligibility, supporting documents, and other relevant factors.</p>',
+    btn: 'I Understand',
+  },
+  ms: {
+    title: 'PEMBERITAHUAN',
+    body: '<p>Laman web ini bukan merupakan laman web rasmi Bank Simpanan Nasional (BSN). Laman web ini dibangunkan oleh pegawai Perbankan Runcit Bank Simpanan Nasional (BSN) bagi memudahkan urusan pertanyaan, pengiraan anggaran serta pra-pendaftaran permohonan pembiayaan.</p><p>Sebarang pengiraan, simulasi atau maklumat yang dipaparkan melalui laman web ini adalah untuk tujuan anggaran dan rujukan sahaja, dan tidak boleh dianggap sebagai tawaran atau keputusan muktamad pembiayaan.</p><p>Kelulusan serta terma pembiayaan adalah tertakluk kepada penilaian dan kelulusan BSN, termasuk semakan rekod kewangan, kelayakan pemohon, dokumen sokongan serta faktor-faktor lain yang berkaitan.</p>',
+    btn: 'Saya Faham',
+  },
+};
+function setNoticeLang(l){
+  document.querySelectorAll('#noticeOverlay .lang-btn').forEach(b => b.classList.toggle('active', b.dataset.noticeLang === l));
+  document.getElementById('noticeTitle').textContent = NOTICE_CONTENT[l].title;
+  document.getElementById('noticeBody').innerHTML = NOTICE_CONTENT[l].body;
+  document.getElementById('noticeBtn').textContent = NOTICE_CONTENT[l].btn;
+}
+const NOTICE_ACK_KEY = 'bsn_notice_ack_v1';
+function dismissNotice(){
+  localStorage.setItem(NOTICE_ACK_KEY, '1');
+  document.getElementById('noticeOverlay').hidden = true;
+}
+function showNoticeIfNeeded(){
+  if (localStorage.getItem(NOTICE_ACK_KEY) !== '1'){
+    setNoticeLang('en');
+    document.getElementById('noticeOverlay').hidden = false;
+  }
+}
+showNoticeIfNeeded();
 </script>
 </body>
 </html>
