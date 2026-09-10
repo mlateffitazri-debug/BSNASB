@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
 <title>BSN Credit Card Application — Auto-fill</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -842,7 +843,7 @@
       <label for="consentApply">Saya bersetuju untuk memohon Kad Kredit ini / I agree to apply for this Credit Card</label>
     </div>
     <p class="hint" style="margin:-4px 0 10px;">Ini akan menghantar mesej pemberitahuan ke WhatsApp banker. Dokumen sokongan dimuat naik secara berasingan melalui borang di bawah.</p>
-    <a href="#" id="btnWhatsappApply" class="btn-whatsapp" style="pointer-events:none;opacity:.5;" target="_blank" rel="noopener">
+    <a href="#" id="btnWhatsappApply" class="btn-whatsapp" style="pointer-events:none;opacity:.5;" target="_blank" rel="noopener noreferrer">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0 0 12.05 4C7.14 4 3.13 8 3.13 12.9c0 1.6.42 3.14 1.2 4.5L3 21l3.7-1.3a8.9 8.9 0 0 0 4.35 1.14h.01c4.91 0 8.92-4 8.92-8.9a8.84 8.84 0 0 0-2.38-6.62zM12.06 19.4h-.01a7.4 7.4 0 0 1-3.77-1.03l-.27-.16-2.8.97.94-2.72-.18-.28a7.36 7.36 0 0 1-1.14-3.94c0-4.08 3.33-7.4 7.44-7.4a7.4 7.4 0 0 1 5.26 2.17 7.32 7.32 0 0 1 2.17 5.23c0 4.08-3.33 7.4-7.44 7.4zm4.08-5.54c-.22-.11-1.32-.65-1.53-.72-.2-.08-.35-.11-.5.11-.15.22-.58.72-.7.87-.13.15-.26.16-.48.05-.22-.11-.94-.35-1.79-1.11-.66-.59-1.11-1.32-1.24-1.54-.13-.22-.01-.34.1-.45.1-.1.22-.26.33-.38.11-.13.15-.22.22-.37.07-.15.04-.28-.02-.39-.06-.11-.5-1.2-.68-1.65-.18-.43-.36-.37-.5-.38h-.43c-.15 0-.39.06-.59.28-.2.22-.77.75-.77 1.84s.79 2.13.9 2.28c.11.15 1.55 2.36 3.75 3.31.52.22.93.36 1.25.46.53.17 1.01.14 1.39.09.42-.06 1.32-.54 1.51-1.06.19-.52.19-.96.13-1.06-.06-.09-.2-.15-.42-.26z"/></svg>
       <span>Hantar ke WhatsApp / Send to WhatsApp</span>
     </a>
@@ -862,13 +863,13 @@
       <code id="driveFolderName">-</code>
       <button type="button" class="btn-copy" id="btnCopyFolderName">Salin / Copy</button>
     </div>
-    <a href="#" id="driveFolderLink" class="btn-primary" style="display:block;text-align:center;text-decoration:none;padding:13px 16px;margin-top:6px;" target="_blank" rel="noopener">Buka Borang Muat Naik Dokumen / Open Document Upload Form</a>
+    <a href="#" id="driveFolderLink" class="btn-primary" style="display:block;text-align:center;text-decoration:none;padding:13px 16px;margin-top:6px;" target="_blank" rel="noopener noreferrer">Buka Borang Muat Naik Dokumen / Open Document Upload Form</a>
   </div>
 
   <div class="footnote">Borang tidak rasmi — untuk tujuan pratonton sahaja. Sila semak dan tandatangan borang rasmi BSN sebelum dihantar.<br>Unofficial preview form — please review and sign the official BSN form before submission.</div>
 </div>
 
-<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js" integrity="sha384-weMABwrltA6jWR8DDe9Jp5blk+tZQh7ugpCsF3JwSA53WZM9/14PjS5LAJNHNjAI" crossorigin="anonymous"></script>
 <script>
 const PDF_URL = 'bsn-credit-card-form.pdf';
 const PAGE_H = 841.89;
