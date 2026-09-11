@@ -103,6 +103,12 @@
   .btn-whatsapp{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:#25D366;color:#fff;padding:16px;font-size:1rem;font-weight:800;border-radius:10px;text-decoration:none;margin-top:8px;}
   .btn-whatsapp:hover{background:#1ebe5a;}
   .btn-whatsapp svg{width:22px;height:22px;flex-shrink:0;}
+  .banker-card{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:18px;margin:0 0 16px;text-align:left;}
+  .banker-card .banker-name{font-weight:800;font-size:1.05rem;color:var(--text);margin:0 0 2px;}
+  .banker-card .banker-title{color:var(--accent-dark);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;margin:0 0 14px;}
+  .banker-card .banker-addr{font-size:.85rem;line-height:1.6;color:var(--text);margin:0 0 10px;}
+  .banker-card .banker-row{display:flex;gap:8px;font-size:.85rem;line-height:1.6;color:var(--text);}
+  .banker-card .banker-label{color:var(--muted);min-width:34px;font-weight:700;}
 
   input[type=range]{
     width:100%;height:6px;border-radius:4px;background:var(--panel2);
@@ -539,6 +545,24 @@
 
       <div id="leadSummaryBox" class="history-box"></div>
 
+      <p class="helptext" data-i18n="banker_heading" style="text-align:center;margin:0 0 8px;font-weight:700;">Your Application Will Be Handled By</p>
+      <div class="banker-card">
+        <p class="banker-name">NORLIDA BINTI MOHD AZMAN</p>
+        <p class="banker-title">Financial Executive</p>
+        <p class="banker-addr">
+          Bank Simpanan Nasional<br>
+          Cawangan Pandan Indah<br>
+          No 8G, Jalan Perubatan 2<br>
+          Pandan Indah, 55100 Kuala Lumpur<br>
+          Malaysia
+        </p>
+        <div class="banker-row"><span class="banker-label">T</span><span>03 4296 0486</span></div>
+        <div class="banker-row"><span class="banker-label">M</span><span>013 7507106</span></div>
+        <div class="banker-row"><span class="banker-label">F</span><span>03 4296 0486</span></div>
+        <div class="banker-row"><span class="banker-label">E</span><span>norlida_azman@bsn.com.my</span></div>
+        <div class="banker-row"><span class="banker-label">W</span><span>www.bsn.com.my</span></div>
+      </div>
+
       <a id="waButton" class="btn-whatsapp" href="#" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0 0 12.05 4C7.14 4 3.13 8 3.13 12.9c0 1.6.42 3.14 1.2 4.5L3 21l3.7-1.3a8.9 8.9 0 0 0 4.35 1.14h.01c4.91 0 8.92-4 8.92-8.9a8.84 8.84 0 0 0-2.38-6.62zM12.06 19.4h-.01a7.4 7.4 0 0 1-3.77-1.03l-.27-.16-2.8.97.94-2.72-.18-.28a7.36 7.36 0 0 1-1.14-3.94c0-4.08 3.33-7.4 7.44-7.4a7.4 7.4 0 0 1 5.26 2.17 7.32 7.32 0 0 1 2.17 5.23c0 4.08-3.33 7.4-7.44 7.4zm4.08-5.54c-.22-.11-1.32-.65-1.53-.72-.2-.08-.35-.11-.5.11-.15.22-.58.72-.7.87-.13.15-.26.16-.48.05-.22-.11-.94-.35-1.79-1.11-.66-.59-1.11-1.32-1.24-1.54-.13-.22-.01-.34.1-.45.1-.1.22-.26.33-.38.11-.13.15-.22.22-.37.07-.15.04-.28-.02-.39-.06-.11-.5-1.2-.68-1.65-.18-.43-.36-.37-.5-.38h-.43c-.15 0-.39.06-.59.28-.2.22-.77.75-.77 1.84s.79 2.13.9 2.28c.11.15 1.55 2.36 3.75 3.31.52.22.93.36 1.25.46.53.17 1.01.14 1.39.09.42-.06 1.32-.54 1.51-1.06.19-.52.19-.96.13-1.06-.06-.09-.2-.15-.42-.26z"/></svg>
         <span data-i18n="btn_whatsapp">Chat on WhatsApp</span>
@@ -627,6 +651,7 @@ const I18N = {
     s11_eyebrow: "Almost Done",
     s11_question: "You're all set!",
     s11_help: "Tap the button below to send your details to a BSN representative on WhatsApp.",
+    banker_heading: "Your Application Will Be Handled By",
     btn_whatsapp: "Chat on WhatsApp",
     wa_message: (name,phone,email,amount,tenure,strategy,returns,years)=>
       `Hi, I'm interested in applying for BSN ASB Term Financing.\n\nName: ${name}\nMobile: ${phone}\nEmail: ${email}\n\nSummary:\n- Financing Amount: ${amount}\n- Tenure: ${tenure} years\n- Strategy: ${strategy}\n- Estimated Total Returns: ${returns} (after ${years} year${years>1?'s':''})`,
@@ -736,6 +761,7 @@ const I18N = {
     s11_eyebrow: "Hampir Selesai",
     s11_question: "Anda sudah bersedia!",
     s11_help: "Ketik butang di bawah untuk hantar maklumat anda kepada wakil BSN melalui WhatsApp.",
+    banker_heading: "Permohonan Anda Akan Diuruskan Oleh",
     btn_whatsapp: "Chat di WhatsApp",
     wa_message: (name,phone,email,amount,tenure,strategy,returns,years)=>
       `Assalamualaikum/Salam, saya berminat memohon BSN ASB Term Financing.\n\nNama: ${name}\nNo. Telefon: ${phone}\nEmel: ${email}\n\nRingkasan:\n- Jumlah Pembiayaan: ${amount}\n- Tempoh: ${tenure} tahun\n- Strategi: ${strategy}\n- Anggaran Jumlah Pulangan: ${returns} (selepas ${years} tahun)`,
